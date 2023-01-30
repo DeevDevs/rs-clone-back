@@ -10,6 +10,7 @@ const DB = process.env.DATABASE.replace(
 
 mongoose
   .connect(DB, {
+    dbName: `rs-clone`,
     useNewUrlParser: true,
     autoIndex: true,
     useUnifiedTopology: true,

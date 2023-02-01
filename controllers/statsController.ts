@@ -25,17 +25,18 @@ export async function updateOneStats(req, res, next) {
     if (!oldStats) {
       throw new Error("No document found with that ID");
     }
-    console.log(oldStats, req.body.rate);
+    console.log(oldStats, req.body.rateValue);
     const newRate =
-      (oldStats.averageRate * oldStats.places + req.body.rate) /
+      (oldStats.averageRate * oldStats.places + req.body.rateValue) /
       (oldStats.places + 1);
     console.log(newRate);
     const updateBody = {
       places: oldStats.places + 1,
+      stats: oldStats.days + req.body.days,
       averageRate: newRate,
       sites: [...oldStats.sites, ...req.body.sites],
-      countries: [...oldStats.countries, ...req.body.countries],
-      continents: [...oldStats.continents, ...req.body.continents],
+      countries: [...oldStats.countries, req.body.countryName],
+      continents: [...oldStats.continents, req.body.continentName],
     };
     const doc = await Stats.findByIdAndUpdate(statsID, updateBody, {
       new: true,

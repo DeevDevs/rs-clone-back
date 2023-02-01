@@ -1,55 +1,32 @@
 import User from "./../models/userModel";
-import Stats from "../models/statsModel";
+import Memoir from "../models/memoirModel";
 
-export async function addNewUser(req, res, next) {
+export async function addNewMemoir(req, res, next) {
   try {
     console.log(req.body);
-    const newStats = await Stats.create({
-      places: 0,
-      days: 0,
-      averageRate: 0,
-      sites: [],
-      countries: [],
-      continents: [],
-    });
-
-    const newUser = await User.create({
-      name: req.body.name,
-      email: req.body.email,
-      password: req.body.password,
-      role: req.body.role === "admin" ? undefined : req.body.role,
-      statsID: newStats.id,
-      memoirIDs: [],
-      passwordConfirm: req.body.passwordConfirm,
-    });
+    const newMemoir = await Memoir.create({ ...req.body });
 
     res.status(201).json({
       status: "success",
       data: {
-        data: newUser,
+        data: newMemoir,
       },
     });
   } catch (error) {
     res.status(400).json({
-      status: "failure",
+      status: error.message,
     });
   }
 }
 
-export async function deleteOneUser(req, res, next) {
+export async function deleteOneMemoir(req, res, next) {
   try {
-    const thisUser = await User.findById(req.body.id);
-    if (!thisUser) {
+    const thisMemoir = await Memoir.findById(req.body.id);
+    if (!thisMemoir) {
       throw new Error("No user found with that ID");
     }
-    console.log(thisUser.statsID);
-
-    const statsDeleted = await Stats.findByIdAndDelete(thisUser.statsID);
-    if (!statsDeleted) {
-      throw new Error("No stats found with that ID");
-    }
-    const thisUserDeleted = await User.findByIdAndDelete(req.body.id);
-    if (!thisUserDeleted) {
+    const thisMemoirDeleted = await Memoir.findByIdAndDelete(req.body.id);
+    if (!thisMemoirDeleted) {
       throw new Error("No user found with that ID");
     }
     res.status(204).json({
@@ -63,16 +40,16 @@ export async function deleteOneUser(req, res, next) {
   }
 }
 
-export async function getOneUser(req, res, next) {
+export async function getOneMemoir(req, res, next) {
   try {
-    const user = await User.findById(req.body.id);
+    const memoir = await Memoir.findById(req.body.id);
     // do not forget to remove password copy from the object later
-    if (!user) {
+    if (!memoir) {
       throw new Error("No document found with that ID");
     }
     res.status(200).json({
       status: "success",
-      data: user,
+      data: memoir,
     });
   } catch (error) {
     res.status(400).json({
@@ -81,13 +58,13 @@ export async function getOneUser(req, res, next) {
   }
 }
 
-export async function updateOneUser(req, res, next) {
+export async function updateOneMemoir(req, res, next) {
   try {
     const id = req.body.id;
     const updateBody = {
-      name: req.body.name,
+      memoirPhoto: req.body.memoirPhoto,
     };
-    const doc = await User.findByIdAndUpdate(id, updateBody, {
+    const doc = await Memoir.findByIdAndUpdate(id, updateBody, {
       new: true, // return the new/updated document/data (возвращает новую версию документа)
       runValidators: true,
     });

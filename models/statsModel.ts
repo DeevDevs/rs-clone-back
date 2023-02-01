@@ -6,6 +6,11 @@ const statsSchema = new mongoose.Schema({
     unique: false,
     required: [true, "You have to provide a number of places visited"],
   },
+  days: {
+    type: Number,
+    unique: false,
+    required: [true, "You have to provide a number of days spent in the trip"],
+  },
   averageRate: {
     type: Number,
     unique: false,

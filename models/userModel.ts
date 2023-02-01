@@ -26,6 +26,14 @@ const userSchema = new mongoose.Schema({
     enum: ["user", "admin"],
     default: "user",
   },
+  statsID: {
+    type: String,
+    required: [true, "You must have stats created for you"],
+  },
+  memoirIDs: {
+    type: [String],
+    required: [true, "You must have memoirs bank created for you"],
+  },
   password: {
     type: String,
     required: [true, "You have to create a password"],

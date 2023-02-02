@@ -1,4 +1,5 @@
 import express from "express";
+import { protect } from "../controllers/authorizeController";
 import {
   addNewMemoir,
   deleteOneMemoir,
@@ -7,6 +8,8 @@ import {
 } from "../controllers/memoirController";
 
 const router = express.Router();
+
+router.use(protect);
 
 router.post("/", addNewMemoir);
 router.delete("/", deleteOneMemoir);

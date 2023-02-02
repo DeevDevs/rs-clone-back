@@ -4,6 +4,20 @@ import Stats from "../models/statsModel";
 export async function addNewUser(req, res, next) {
   try {
     console.log(req.body);
+    const newUser = await User.create({
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+      role: req.body.role === "admin" ? undefined : req.body.role,
+      statsID: "",
+      memoirIDs: [],
+      passwordConfirm: req.body.passwordConfirm,
+    });
+
+    if (!newUser) {
+      throw new Error("Could not create a user");
+    }
+
     const newStats = await Stats.create({
       places: 0,
       days: 0,
@@ -13,25 +27,32 @@ export async function addNewUser(req, res, next) {
       continents: [],
     });
 
-    const newUser = await User.create({
-      name: req.body.name,
-      email: req.body.email,
-      password: req.body.password,
-      role: req.body.role === "admin" ? undefined : req.body.role,
-      statsID: newStats.id,
-      memoirIDs: [],
-      passwordConfirm: req.body.passwordConfirm,
-    });
+    if (!newStats) {
+      throw new Error("Could not create stats default document");
+    }
+
+    const readyUser = await User.findByIdAndUpdate(
+      newUser.id,
+      { statsID: newStats.id },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!readyUser) {
+      throw new Error("Could not update user with stats ID");
+    }
 
     res.status(201).json({
       status: "success",
       data: {
-        data: newUser,
+        data: readyUser,
       },
     });
   } catch (error) {
     res.status(400).json({
-      status: "failure",
+      status: error.message,
     });
   }
 }

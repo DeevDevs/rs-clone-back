@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
   },
   statsID: {
     type: String,
-    required: [true, "You must have stats created for you"],
+    default: "",
   },
   memoirIDs: {
     type: [String],
@@ -53,6 +53,7 @@ const userSchema = new mongoose.Schema({
     },
   },
 });
+
 
 const User = mongoose.model("User", userSchema);
 

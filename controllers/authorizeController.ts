@@ -104,7 +104,6 @@ export const login = async (req, res, next) => {
 };
 
 export const logout = (req, res) => {
-  //replace the JWT token in the cookie with some non-token string (заменяет JWT токен белибердой =) )
   res.cookie("jwt", "loggedout", {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
@@ -112,28 +111,40 @@ export const logout = (req, res) => {
   res.status(200).json({ status: "success" });
 };
 
-// export const isLoggedIn = async (req, res, next) => {
-//   try {
-//     if (req.cookies.jwt) {
-//       // verify the token (проверяет токен)
-//       const decoded = await promisify(jwt.verify)(
-//         req.cookies.jwt,
-//         process.env.JWT_SECRET
-//       );
-//       // check if the user still exists (проверяет, существует ли все еще пользователь)
-//       const currentUser = await User.findById(decoded.id);
-//       if (!currentUser) {
-//         return next();
-//       }
-//       // creates a document in response for future use (сохраняет данные в ответе)
-//       res.locals.user = currentUser;
-//       return next();
-//     }
-//   } catch (err) {
-//     return next();
-//   }
-//   next();
-// };
+export const isLoggedIn = async (req, res, next) => {
+  try {
+    if (req.cookies.jwt && req.cookies.jwt !== "loggedout") {
+      const decoded = await promisify(jwt.verify)(
+        req.cookies.jwt,
+        process.env.JWT_SECRET
+      );
+      const currentUser = await User.findById(decoded.id);
+      if (!currentUser) {
+        res.status(200).json({
+          status: "success",
+          data: { message: "User is not logged in" },
+        });
+        return;
+      }
+      res.status(200).json({
+        status: "success",
+        data: currentUser,
+      });
+      return;
+    }
+    res.status(200).json({
+      status: "success",
+      data: { message: "User is not logged in" },
+    });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      status: error.message,
+    });
+  }
+  next();
+};
 
 export const protect = async (req, res, next) => {
   try {

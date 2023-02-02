@@ -4,6 +4,7 @@ import {
   logout,
   protect,
   signUp,
+  isLoggedIn,
 } from "../controllers/authorizeController";
 import {
   addNewUser,
@@ -17,6 +18,7 @@ const router = express.Router();
 router.post("/signup", signUp);
 router.post("/login", login);
 router.post("/logout", logout);
+router.get("/isloggedin", isLoggedIn);
 
 router.use(protect);
 

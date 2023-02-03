@@ -1,26 +1,26 @@
 import User from "./../models/userModel";
 import Memoir from "../models/memoirModel";
+import Stats from "../models/statsModel";
 
 export async function addNewMemoir(req, res, next) {
   try {
     const newMemoir = await Memoir.create({ ...req.body });
     if (!newMemoir) throw new Error("Could not create a memoir");
-    console.log(newMemoir);
-
     const thisUser = await User.findById(res.locals.user._id);
     if (!thisUser) throw new Error("No user found with that ID");
-    const updateBody = {
+
+    const updateUserBody = {
       memoirIDs: [newMemoir.id, ...thisUser.memoirIDs],
     };
     const updatedUser = await User.findByIdAndUpdate(
       res.locals.user._id,
-      updateBody,
+      updateUserBody,
       {
         new: true,
         runValidators: true,
       }
     );
-    if (!updatedUser) throw new Error("No user found with that ID");
+    if (!updatedUser) throw new Error("Could not update the user with that ID");
 
     res.status(201).json({
       status: "success",

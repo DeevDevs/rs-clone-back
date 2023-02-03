@@ -22,7 +22,7 @@ const memoirSchema = new mongoose.Schema({
     required: [true, "You have to provide a name of the country you visited"],
   },
   continentName: {
-    type: [String],
+    type: String,
     unique: false,
   },
   whereFromLongLat: {
@@ -33,8 +33,16 @@ const memoirSchema = new mongoose.Schema({
       "You have to provide geolocation of the place you arrived from",
     ],
   },
+  distance: {
+    type: Number,
+    unique: false,
+    required: [
+      true,
+      "You have to provide distance between the points on the map",
+    ],
+  },
   date: {
-    type: [Date],
+    type: Date,
     unique: false,
     required: [true, "You have to provide a date of the trip"],
   },
@@ -47,6 +55,11 @@ const memoirSchema = new mongoose.Schema({
     type: Number,
     unique: false,
     required: [true, "You have to provide a number of days in the trip"],
+  },
+  sites: {
+    type: [String],
+    unique: false,
+    default: [],
   },
   memoirPhoto: {
     type: String,

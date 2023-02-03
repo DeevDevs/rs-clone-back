@@ -16,6 +16,11 @@ const statsSchema = new mongoose.Schema({
     unique: false,
     required: [true, "You have to provide an average rate"],
   },
+  distance: {
+    type: Number,
+    unique: false,
+    required: [true, "You have to provide total distance covered"],
+  },
   sites: {
     type: [String],
     unique: false,

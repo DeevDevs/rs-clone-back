@@ -1,4 +1,6 @@
 import Stats from "../models/statsModel";
+import { updateStats } from "../helperFns/updatedStats";
+import Memoir from "../models/memoirModel";
 
 export async function getOneStats(req, res, next) {
   try {
@@ -22,32 +24,21 @@ export async function updateOneStats(req, res, next) {
   try {
     const statsID = req.body.statsID;
     const oldStats = await Stats.findById(statsID);
-    if (!oldStats) {
-      throw new Error("No document found with that ID");
-    }
-    console.log(oldStats, req.body.rateValue);
-    const newRate =
-      (oldStats.averageRate * oldStats.places + req.body.rateValue) /
-      (oldStats.places + 1);
-    console.log(newRate);
-    const updateBody = {
-      places: oldStats.places + 1,
-      stats: oldStats.days + req.body.days,
-      averageRate: newRate,
-      sites: [...oldStats.sites, ...req.body.sites],
-      countries: [...oldStats.countries, req.body.countryName],
-      continents: [...oldStats.continents, req.body.continentName],
-    };
-    const doc = await Stats.findByIdAndUpdate(statsID, updateBody, {
+    if (!oldStats) throw new Error("Could not find stats with that ID");
+
+    const newMemoir = await Memoir.findById(req.body.memoirID);
+    if (!oldStats) throw new Error("Coud not find memoir with that ID");
+
+    const updateBody = updateStats(oldStats, newMemoir, "add");
+    const updatedStats = await Stats.findByIdAndUpdate(statsID, updateBody, {
       new: true,
     });
-    if (!doc) {
-      throw new Error("No document found with that ID");
-    }
+    if (!updatedStats) throw new Error("Could not update stats");
+
     res.status(200).json({
       status: "success",
       data: {
-        data: doc,
+        data: updatedStats,
       },
     });
   } catch (error) {

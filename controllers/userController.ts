@@ -76,11 +76,12 @@ export async function getOneUser(req, res) {
 export async function updateOneUser(req, res) {
   try {
     const id = req.body.id;
-    const updateBody = {
-      name: req.body.name,
-    };
+    const updateBody = JSON.parse(JSON.stringify(req.body));
+    if (updateBody.password) delete updateBody.password;
+    if (updateBody.passwordConfirm) delete updateBody.passwordConfirm;
+
     const updatedUser = await User.findByIdAndUpdate(id, updateBody, {
-      new: true, // return the new/updated document/data (возвращает новую версию документа)
+      new: true,
       runValidators: true,
     });
     if (!updatedUser) throw new Error("No document found with that ID");

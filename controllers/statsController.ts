@@ -2,7 +2,7 @@ import Stats from "../models/statsModel";
 import { updateStats } from "../helperFns/updatedStats";
 import Memoir from "../models/memoirModel";
 
-export async function getOneStats(req, res, next) {
+export async function getOneStats(req, res) {
   try {
     const stats = await Stats.findById(req.body.statsID);
 
@@ -20,7 +20,7 @@ export async function getOneStats(req, res, next) {
   }
 }
 
-export async function updateOneStats(req, res, next) {
+export async function updateOneStats(req, res) {
   try {
     const statsID = req.body.statsID;
     const oldStats = await Stats.findById(statsID);

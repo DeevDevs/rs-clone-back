@@ -1,6 +1,5 @@
 import User from "./../models/userModel";
 import Memoir from "../models/memoirModel";
-import Stats from "../models/statsModel";
 
 export async function addNewMemoir(req, res, next) {
   try {

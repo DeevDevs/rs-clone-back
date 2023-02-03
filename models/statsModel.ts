@@ -22,15 +22,15 @@ const statsSchema = new mongoose.Schema({
     required: [true, "You have to provide total distance covered"],
   },
   sites: {
-    type: [String],
+    type: [[String]],
     unique: false,
   },
   countries: {
-    type: [String],
+    type: [[String]],
     unique: false,
   },
   continents: {
-    type: [String],
+    type: [[String]],
     unique: false,
   },
 });

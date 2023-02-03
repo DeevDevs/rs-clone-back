@@ -29,7 +29,7 @@ export async function updateOneStats(req, res, next) {
     const newMemoir = await Memoir.findById(req.body.memoirID);
     if (!oldStats) throw new Error("Coud not find memoir with that ID");
 
-    const updateBody = updateStats(oldStats, newMemoir, "add");
+    const updateBody = updateStats(oldStats, newMemoir, req.body.condition);
     const updatedStats = await Stats.findByIdAndUpdate(statsID, updateBody, {
       new: true,
     });

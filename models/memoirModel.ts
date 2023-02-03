@@ -13,7 +13,7 @@ const memoirSchema = new mongoose.Schema({
   },
   longLat: {
     type: [Number],
-    unique: true,
+    unique: false,
     required: [true, "You have to provide geolocation of the destination"],
   },
   countryName: {
@@ -27,7 +27,7 @@ const memoirSchema = new mongoose.Schema({
   },
   whereFromLongLat: {
     type: [Number],
-    unique: true,
+    unique: false,
     required: [
       true,
       "You have to provide geolocation of the place you arrived from",

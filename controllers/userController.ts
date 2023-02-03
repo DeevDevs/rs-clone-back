@@ -1,35 +1,15 @@
 import User from "./../models/userModel";
 import Stats from "../models/statsModel";
+import { createUserBody } from "./../helperFns/newUserBody";
+import { defaultStats } from "../helperFns/staticValues";
 
-export async function addNewUser(req, res, next) {
+export async function addNewUser(req, res) {
   try {
-    console.log(req.body);
-    const newUser = await User.create({
-      name: req.body.name,
-      email: req.body.email,
-      password: req.body.password,
-      role: req.body.role === "admin" ? undefined : req.body.role,
-      statsID: "",
-      memoirIDs: [],
-      passwordConfirm: req.body.passwordConfirm,
-    });
+    const newUser = await User.create(createUserBody(req.body));
+    if (!newUser) throw new Error("Could not create a user");
 
-    if (!newUser) {
-      throw new Error("Could not create a user");
-    }
-
-    const newStats = await Stats.create({
-      places: 0,
-      days: 0,
-      averageRate: 0,
-      sites: [],
-      countries: [],
-      continents: [],
-    });
-
-    if (!newStats) {
-      throw new Error("Could not create stats default document");
-    }
+    const newStats = await Stats.create(defaultStats);
+    if (!newStats) throw new Error("Could not create stats default document");
 
     const readyUser = await User.findByIdAndUpdate(
       newUser.id,
@@ -39,10 +19,7 @@ export async function addNewUser(req, res, next) {
         runValidators: true,
       }
     );
-
-    if (!readyUser) {
-      throw new Error("Could not update user with stats ID");
-    }
+    if (!readyUser) throw new Error("Could not update user with stats ID");
 
     res.status(201).json({
       status: "success",
@@ -57,22 +34,17 @@ export async function addNewUser(req, res, next) {
   }
 }
 
-export async function deleteOneUser(req, res, next) {
+export async function deleteOneUser(req, res) {
   try {
     const thisUser = await User.findById(req.body.id);
-    if (!thisUser) {
-      throw new Error("No user found with that ID");
-    }
-    console.log(thisUser.statsID);
+    if (!thisUser) throw new Error("No user found with that ID");
 
     const statsDeleted = await Stats.findByIdAndDelete(thisUser.statsID);
-    if (!statsDeleted) {
-      throw new Error("No stats found with that ID");
-    }
+    if (!statsDeleted) throw new Error("No stats found with that ID");
+
     const thisUserDeleted = await User.findByIdAndDelete(req.body.id);
-    if (!thisUserDeleted) {
-      throw new Error("No user found with that ID");
-    }
+    if (!thisUserDeleted) throw new Error("No user found with that ID");
+
     res.status(204).json({
       status: "success",
       data: null,
@@ -84,13 +56,12 @@ export async function deleteOneUser(req, res, next) {
   }
 }
 
-export async function getOneUser(req, res, next) {
+export async function getOneUser(req, res) {
   try {
     const user = await User.findById(req.body.id);
     // do not forget to remove password copy from the object later
-    if (!user) {
-      throw new Error("No document found with that ID");
-    }
+    if (!user) throw new Error("No document found with that ID");
+
     res.status(200).json({
       status: "success",
       data: user,
@@ -102,23 +73,22 @@ export async function getOneUser(req, res, next) {
   }
 }
 
-export async function updateOneUser(req, res, next) {
+export async function updateOneUser(req, res) {
   try {
     const id = req.body.id;
     const updateBody = {
       name: req.body.name,
     };
-    const doc = await User.findByIdAndUpdate(id, updateBody, {
+    const updatedUser = await User.findByIdAndUpdate(id, updateBody, {
       new: true, // return the new/updated document/data (возвращает новую версию документа)
       runValidators: true,
     });
-    if (!doc) {
-      throw new Error("No document found with that ID");
-    }
+    if (!updatedUser) throw new Error("No document found with that ID");
+
     res.status(200).json({
       status: "success",
       data: {
-        data: doc,
+        data: updatedUser,
       },
     });
   } catch (error) {

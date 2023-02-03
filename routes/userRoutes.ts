@@ -1,30 +1,19 @@
 import express from "express";
-import {
-  login,
-  logout,
-  protect,
-  signUp,
-  isLoggedIn,
-} from "../controllers/authorizeController";
-import {
-  addNewUser,
-  deleteOneUser,
-  getOneUser,
-  updateOneUser,
-} from "../controllers/userController";
+import * as authCont from "../controllers/authorizeController";
+import * as userCont from "../controllers/userController";
 
 const router = express.Router();
 
-router.post("/signup", signUp);
-router.post("/login", login);
-router.post("/logout", logout);
-router.get("/isloggedin", isLoggedIn);
+router.post("/signup", authCont.signUp);
+router.post("/login", authCont.login);
+router.post("/logout", authCont.logout);
+router.get("/isloggedin", authCont.isLoggedIn);
 
-router.use(protect);
+router.use(authCont.protect);
 
 // router.post("/", addNewUser);
-router.delete("/", deleteOneUser);
-router.get("/", getOneUser);
-router.patch("/", updateOneUser);
+router.delete("/", userCont.deleteOneUser);
+router.get("/", userCont.getOneUser);
+router.patch("/", userCont.updateOneUser);
 
 export default router;

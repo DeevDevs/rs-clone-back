@@ -11,7 +11,6 @@ router.get("/isloggedin", authCont.isLoggedIn);
 
 router.use(authCont.protect);
 
-// router.post("/", addNewUser);
 router.delete("/", userCont.deleteOneUser);
 router.get("/", userCont.getOneUser);
 router.patch("/", userCont.updateOneUser);

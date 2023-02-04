@@ -5,6 +5,7 @@ import { defaultStats } from "../helperFns/staticValues";
 import { promisify } from "util";
 import { createCookieOptions } from "../helperFns/newCookieOpt";
 import { createToken } from "../helperFns/newToken";
+import MyError from "../helperFns/errorClass";
 
 const sendToken = (user, statusCode, req, res) => {
   try {
@@ -30,7 +31,7 @@ const sendToken = (user, statusCode, req, res) => {
   }
 };
 
-export const signUp = async (req, res) => {
+export const signUp = async (req, res, next) => {
   try {
     const newUser = await User.create({
       name: req.body.name,
@@ -41,10 +42,11 @@ export const signUp = async (req, res) => {
       memoirIDs: [],
       passwordConfirm: req.body.passwordConfirm,
     });
-    if (!newUser) throw new Error("Could not create a user");
+    if (!newUser) return next(new MyError("Could not create a user", 503));
 
     const newStats = await Stats.create(defaultStats);
-    if (!newStats) throw new Error("Could not create stats default document");
+    if (!newStats)
+      return next(new MyError("Could not create default stats", 503));
 
     const readyUser = await User.findByIdAndUpdate(
       newUser.id,
@@ -54,30 +56,28 @@ export const signUp = async (req, res) => {
         runValidators: true,
       }
     );
-    if (!readyUser) throw new Error("Could not update user with stats ID");
+    if (!readyUser)
+      return next(new MyError("Could not update user with that stats ID", 503));
 
     sendToken(readyUser, 201, req, res);
   } catch (error) {
-    res.status(400).json({
-      status: error.message,
-    });
+    return next(new MyError("Something went wrong while signup", error.code));
   }
 };
 
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) throw new Error("Email or Password is missing");
+    if (!email || !password)
+      return next(new MyError("Email or Password is missing", 401));
 
     const user = await User.findOne({ email }).select("+password");
     if (!user || password !== user.password)
-      throw new Error("There is no such user, or password is incorrect");
+      return next(new MyError("Email or Password is incorrect", 401));
 
     sendToken(user, 200, req, res);
   } catch (error) {
-    res.status(400).json({
-      status: error.message,
-    });
+    return next(new MyError("Something went wrong while login", 500));
   }
 };
 
@@ -97,28 +97,19 @@ export const isLoggedIn = async (req, res, next) => {
         process.env.JWT_SECRET
       );
       const currentUser = await User.findById(decoded.id);
-      if (!currentUser) {
-        res.status(200).json({
-          status: "success",
-          data: { message: "User is not logged in" },
-        });
-        return;
-      }
+      if (!currentUser) next(new MyError("User is not logged in", 401));
+
       res.status(200).json({
         status: "success",
         data: currentUser,
       });
       return;
     }
-    res.status(200).json({
-      status: "success",
-      data: { message: "User is not logged in" },
-    });
-    return;
+    next(new MyError("User is not logged in", 401));
   } catch (error) {
-    res.status(400).json({
-      status: error.message,
-    });
+    return next(
+      new MyError("Something went wrong while checking authorization", 500)
+    );
   }
   next();
 };
@@ -132,18 +123,19 @@ export const protect = async (req, res, next) => {
     ) {
       token = req.headers.authorization.split(" ")[1];
     } else if (req.cookies.jwt) token = req.cookies.jwt;
-    if (!token) throw new Error("There is no token");
+    if (!token)
+      next(new MyError("Please, signup or login to perform this action", 401));
 
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
     const currentUser = await User.findById(decoded.id);
-    if (!currentUser) throw new Error("There is no such user");
+    if (!currentUser) next(new MyError("No use found with such ID", 404));
 
     req.user = currentUser;
     res.locals.user = currentUser;
     next();
   } catch (error) {
-    res.status(400).json({
-      status: error.message,
-    });
+    return next(
+      new MyError("You are not authorized to perform this action", 401)
+    );
   }
 };

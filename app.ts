@@ -6,6 +6,7 @@ import memoirRoutes from "./routes/memoirRoutes";
 import mongoSanitize from "express-mongo-sanitize";
 import compression from "compression";
 import cookieParser from "cookie-parser";
+import { processError } from "./helperFns/errorHandler";
 
 const app = express();
 
@@ -18,5 +19,7 @@ app.use(cookieParser());
 app.use("/api/user", userRoutes);
 app.use("/api/stats", statsRoutes);
 app.use("/api/memoir", memoirRoutes);
+
+app.use(processError);
 
 export default app;

@@ -1,99 +1,68 @@
 import User from "./../models/userModel";
 import Stats from "../models/statsModel";
 import Memoir from "../models/memoirModel";
-import { createUserBody } from "./../helperFns/newUserBody";
-import { defaultStats } from "../helperFns/staticValues";
+import MyError from "../helperFns/errorClass";
 
-export async function addNewUser(req, res) {
-  try {
-    const newUser = await User.create(createUserBody(req.body));
-    if (!newUser) throw new Error("Could not create a user");
-
-    const newStats = await Stats.create(defaultStats);
-    if (!newStats) throw new Error("Could not create stats default document");
-
-    const readyUser = await User.findByIdAndUpdate(
-      newUser.id,
-      { statsID: newStats.id },
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
-    if (!readyUser) throw new Error("Could not update user with stats ID");
-
-    res.status(201).json({
-      status: "success",
-      data: {
-        data: readyUser,
-      },
-    });
-  } catch (error) {
-    res.status(400).json({
-      status: error.message,
-    });
-  }
-}
-
-export async function deleteOneUser(req, res) {
+export async function deleteOneUser(req, res, next) {
   try {
     const thisUser = await User.findById(req.body.id);
-    if (!thisUser) throw new Error("No user found with that ID");
+    if (!thisUser) return next(new MyError("No user found with that ID", 404));
 
     const statsDeleted = await Stats.findByIdAndDelete(thisUser.statsID);
-    if (!statsDeleted) throw new Error("No stats found with that ID");
+    if (!statsDeleted)
+      return next(new MyError("No stats found with that ID", 404));
 
     const memoirsDeleted = thisUser.memoirIDs.map((memoir) => {
       return new Promise((resolve, reject) => {
         const deletedMemoir = Memoir.findByIdAndDelete(memoir);
-        if (!deletedMemoir) reject(new Error("Could not find memoir"));
+        if (!deletedMemoir) {
+          reject(new Error("Could not find memoir"));
+        }
         resolve(deletedMemoir);
       });
     });
     await Promise.allSettled(memoirsDeleted);
 
-    const thisUserDeleted = await User.findByIdAndDelete(req.body.id);
-    if (!thisUserDeleted) throw new Error("No user found with that ID");
+    await User.findByIdAndDelete(req.body.id);
 
     res.status(204).json({
       status: "success",
       data: null,
     });
   } catch (error) {
-    res.status(400).json({
-      status: error.message,
-    });
+    return next(
+      new MyError("Something went wrong while deleting user profile", 500)
+    );
   }
 }
 
-export async function getOneUser(req, res) {
+export async function getOneUser(req, res, next) {
   try {
     const user = await User.findById(req.body.id);
-    if (!user) throw new Error("No document found with that ID");
+    if (!user) return next(new MyError("No user found with that ID", 404));
 
     res.status(200).json({
       status: "success",
       data: user,
     });
   } catch (error) {
-    res.status(400).json({
-      status: error.message,
-    });
+    return next(
+      new MyError("Something went wrong while getting user profile", 500)
+    );
   }
 }
 
-export async function updateOneUser(req, res) {
+export async function updateOneUser(req, res, next) {
   try {
     const id = req.body.id;
     const updateBody = JSON.parse(JSON.stringify(req.body));
-    if (updateBody.password) delete updateBody.password;
-    if (updateBody.passwordConfirm) delete updateBody.passwordConfirm;
 
     const updatedUser = await User.findByIdAndUpdate(id, updateBody, {
       new: true,
       runValidators: true,
     });
-    if (!updatedUser) throw new Error("No document found with that ID");
+    if (!updatedUser)
+      return next(new MyError("No user found with that ID", 404));
 
     res.status(200).json({
       status: "success",
@@ -102,8 +71,11 @@ export async function updateOneUser(req, res) {
       },
     });
   } catch (error) {
-    res.status(400).json({
-      status: error.message,
-    });
+    return next(
+      new MyError(
+        "Something went wrong while updating user profile",
+        error.code
+      )
+    );
   }
 }

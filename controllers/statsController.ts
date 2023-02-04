@@ -1,39 +1,42 @@
 import Stats from "../models/statsModel";
 import { updateStats } from "../helperFns/updatedStats";
 import Memoir from "../models/memoirModel";
+import MyError from "../helperFns/errorClass";
 
-export async function getOneStats(req, res) {
+export async function getOneStats(req, res, next) {
   try {
     const stats = await Stats.findById(req.body.statsID);
+    if (!stats) next(new MyError("No statistics found for this user", 404));
 
-    if (!stats) {
-      throw new Error("No document found with that ID");
-    }
     res.status(200).json({
       status: "success",
       data: stats,
     });
   } catch (error) {
-    res.status(400).json({
-      status: error.message,
-    });
+    return next(
+      new MyError("Something went wrong while getting user statistics", 500)
+    );
   }
 }
 
-export async function updateOneStats(req, res) {
+export async function updateOneStats(req, res, next) {
   try {
+    if (!req.body.statsID || !req.body.memoirID)
+      next(
+        new MyError("Wrong stats or wrong memoir is selected (devError)", 400)
+      );
     const statsID = req.body.statsID;
     const oldStats = await Stats.findById(statsID);
-    if (!oldStats) throw new Error("Could not find stats with that ID");
+    if (!oldStats) next(new MyError("Could not find stats with that ID", 404));
 
     const newMemoir = await Memoir.findById(req.body.memoirID);
-    if (!oldStats) throw new Error("Coud not find memoir with that ID");
+    if (!oldStats) next(new MyError("Could not find memoir with that ID", 404));
 
     const updateBody = updateStats(oldStats, newMemoir, req.body.condition);
     const updatedStats = await Stats.findByIdAndUpdate(statsID, updateBody, {
       new: true,
     });
-    if (!updatedStats) throw new Error("Could not update stats");
+    if (!updatedStats) next(new MyError("Could not update stats", 500));
 
     res.status(200).json({
       status: "success",
@@ -42,8 +45,8 @@ export async function updateOneStats(req, res) {
       },
     });
   } catch (error) {
-    res.status(400).json({
-      status: error.message,
-    });
+    return next(
+      new MyError("Something went wrong while updating user statistics", 500)
+    );
   }
 }

@@ -2,13 +2,15 @@ import User from "./../models/userModel";
 import Memoir from "../models/memoirModel";
 import Stats from "../models/statsModel";
 import { updateStats } from "../helperFns/updatedStats";
+import MyError from "../helperFns/errorClass";
 
-export async function addNewMemoir(req, res) {
+export async function addNewMemoir(req, res, next) {
   try {
     const newMemoir = await Memoir.create({ ...req.body });
-    if (!newMemoir) throw new Error("Could not create a memoir");
+    if (!newMemoir) return next(new MyError("Could not create a memoir", 404));
+
     const thisUser = await User.findById(res.locals.user._id);
-    if (!thisUser) throw new Error("No user found with that ID");
+    if (!thisUser) return next(new MyError("No user found with that ID", 404));
 
     const updateUserBody = {
       memoirIDs: [newMemoir.id, ...thisUser.memoirIDs],
@@ -21,7 +23,8 @@ export async function addNewMemoir(req, res) {
         runValidators: true,
       }
     );
-    if (!updatedUser) throw new Error("Could not update the user with that ID");
+    if (!updatedUser)
+      return next(new MyError("Could not update user with that ID", 500));
 
     res.status(201).json({
       status: "success",
@@ -30,22 +33,22 @@ export async function addNewMemoir(req, res) {
       },
     });
   } catch (error) {
-    res.status(400).json({
-      status: error.message,
-    });
+    return next(
+      new MyError("Something went wrong while creating a memoir", 500)
+    );
   }
 }
 
-export async function deleteOneMemoir(req, res) {
+export async function deleteOneMemoir(req, res, next) {
   try {
     const thisMemoir = await Memoir.findById(req.body.id);
-    if (!thisMemoir) throw new Error("No memoir found with that ID");
+    if (!thisMemoir)
+      return next(new MyError("No memoir found with that ID", 404));
 
     const thisUser = await User.findById(res.locals.user._id);
-    if (!thisUser) throw new Error("No user found with that ID");
+    if (!thisUser) return next(new MyError("No user found with that ID", 404));
 
-    const thisMemoirDeleted = await Memoir.findByIdAndDelete(req.body.id);
-    if (!thisMemoirDeleted) throw new Error("No user found with that ID");
+    await Memoir.findByIdAndDelete(req.body.id);
 
     const updateBody = {
       memoirIDs: thisUser.memoirIDs.filter((id) => id !== req.body.id),
@@ -60,44 +63,47 @@ export async function deleteOneMemoir(req, res) {
       }
     );
     if (!updatedUser)
-      throw new Error("Could not update user DB after memoir was deleted");
+      return next(
+        new MyError("Could not update user DB after memoir was deleted", 500)
+      );
 
     res.status(204).json({
       status: "success",
       data: null,
     });
   } catch (error) {
-    res.status(400).json({
-      status: error.message,
-    });
+    return next(
+      new MyError("Something went wrong while deleting a memoir", 500)
+    );
   }
 }
 
-export async function getOneMemoir(req, res) {
+export async function getOneMemoir(req, res, next) {
   try {
     const memoir = await Memoir.findById(req.body.id);
-    if (!memoir) throw new Error("No document found with that ID");
+    if (!memoir) return next(new MyError("No memoir found with that ID", 404));
 
     res.status(200).json({
       status: "success",
       data: memoir,
     });
   } catch (error) {
-    res.status(400).json({
-      status: error.message,
-    });
+    return next(
+      new MyError("Something went wrong while getting a memoir", 500)
+    );
   }
 }
 
-export async function updateOneMemoir(req, res) {
+export async function updateOneMemoir(req, res, next) {
   try {
     const userStatsID = res.locals.user.statsID;
     const targetMemoirID = req.body.id;
     const oldStats = await Stats.findById(userStatsID);
-    if (!oldStats) throw new Error("Could not find stats with that ID");
+    if (!oldStats) return next(new MyError("No stats found with that ID", 404));
 
     const oldMemoir = await Memoir.findById(targetMemoirID);
-    if (!oldStats) throw new Error("Could not find memoir with that ID");
+    if (!oldStats)
+      return next(new MyError("No memoir found with that ID", 404));
 
     const initialStatsUpdateBody = updateStats(oldStats, oldMemoir, "remove");
 
@@ -109,7 +115,9 @@ export async function updateOneMemoir(req, res) {
       }
     );
     if (!updatedStats)
-      throw new Error("Could not update stats while memoir update");
+      return next(
+        new MyError("Could not update stats while memoir update", 500)
+      );
 
     const updateBody = { ...req.body };
 
@@ -121,7 +129,7 @@ export async function updateOneMemoir(req, res) {
         runValidators: true,
       }
     );
-    if (!updatedMemoir) throw new Error("No document found with that ID");
+    if (!updatedMemoir) next(new MyError("No memoir found with that ID", 404));
 
     res.status(200).json({
       status: "success",
@@ -130,8 +138,8 @@ export async function updateOneMemoir(req, res) {
       },
     });
   } catch (error) {
-    res.status(400).json({
-      status: error.message,
-    });
+    return next(
+      new MyError("Something went wrong while updating a memoir", 500)
+    );
   }
 }

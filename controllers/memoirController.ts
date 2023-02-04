@@ -76,7 +76,6 @@ export async function deleteOneMemoir(req, res) {
 export async function getOneMemoir(req, res) {
   try {
     const memoir = await Memoir.findById(req.body.id);
-    // do not forget to remove password copy from the object later
     if (!memoir) throw new Error("No document found with that ID");
 
     res.status(200).json({

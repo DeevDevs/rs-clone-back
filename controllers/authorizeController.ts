@@ -15,7 +15,6 @@ const sendToken = (user, statusCode, req, res) => {
     //   cookieOptions.secure = true; // this is specific for HEROKU (это необходимо для работы с Heroku)
     // adds a cookie to response object (добавляет cookie в ответ)
     res.cookie("jwt", token, cookieOptions);
-    // hides the user password (прячет пароль пользователя)
     user.password = undefined;
     res.status(statusCode).json({
       status: "success",
@@ -31,7 +30,7 @@ const sendToken = (user, statusCode, req, res) => {
   }
 };
 
-export const signUp = async (req, res, next) => {
+export const signUp = async (req, res) => {
   try {
     const newUser = await User.create({
       name: req.body.name,
@@ -42,16 +41,10 @@ export const signUp = async (req, res, next) => {
       memoirIDs: [],
       passwordConfirm: req.body.passwordConfirm,
     });
-
-    if (!newUser) {
-      throw new Error("Could not create a user");
-    }
+    if (!newUser) throw new Error("Could not create a user");
 
     const newStats = await Stats.create(defaultStats);
-
-    if (!newStats) {
-      throw new Error("Could not create stats default document");
-    }
+    if (!newStats) throw new Error("Could not create stats default document");
 
     const readyUser = await User.findByIdAndUpdate(
       newUser.id,
@@ -61,12 +54,8 @@ export const signUp = async (req, res, next) => {
         runValidators: true,
       }
     );
+    if (!readyUser) throw new Error("Could not update user with stats ID");
 
-    if (!readyUser) {
-      throw new Error("Could not update user with stats ID");
-    }
-
-    // create and send token for the logged in session (отправляет токен для авторизованной сессии)
     sendToken(readyUser, 201, req, res);
   } catch (error) {
     res.status(400).json({
@@ -75,19 +64,15 @@ export const signUp = async (req, res, next) => {
   }
 };
 
-export const login = async (req, res, next) => {
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password) {
-      throw new Error("Email or Password is missing");
-    }
-    // retrieve the encrypted password from the user profile (выводит зашифрованный пароль из базы данных)
+    if (!email || !password) throw new Error("Email or Password is missing");
+
     const user = await User.findOne({ email }).select("+password");
-    // check if the entered password is correct (проверяет пароль)
-    if (!user || password !== user.password) {
+    if (!user || password !== user.password)
       throw new Error("There is no such user, or password is incorrect");
-    }
-    // create and send token for the logged in session (отправляет токен для авторизованной сессии)
+
     sendToken(user, 200, req, res);
   } catch (error) {
     res.status(400).json({
@@ -131,7 +116,6 @@ export const isLoggedIn = async (req, res, next) => {
     });
     return;
   } catch (error) {
-    console.log(error);
     res.status(400).json({
       status: error.message,
     });
@@ -141,7 +125,6 @@ export const isLoggedIn = async (req, res, next) => {
 
 export const protect = async (req, res, next) => {
   try {
-    // check the token presence in headers or in cookies (проверяет наличие токена в headers и cookies)
     let token;
     if (
       req.headers.authorization &&
@@ -149,22 +132,12 @@ export const protect = async (req, res, next) => {
     ) {
       token = req.headers.authorization.split(" ")[1];
     } else if (req.cookies.jwt) token = req.cookies.jwt;
+    if (!token) throw new Error("There is no token");
 
-    if (!token) {
-      // return next(
-      //   new AppError("You are not logged in. Please, log in to get access", 401)
-      // );
-      throw new Error("There is no token");
-    }
-    // verify the token using the secret (проверяет токен)
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-    // check if the user still exists (проверяет, существует ли пользователь)
     const currentUser = await User.findById(decoded.id);
-    if (!currentUser) {
-      // return next(new AppError("The user does not exist", 401));
-      throw new Error("There is no such user");
-    }
-    // store user data (сохраняет данные пользователя в объектах запроса и ответа)
+    if (!currentUser) throw new Error("There is no such user");
+
     req.user = currentUser;
     res.locals.user = currentUser;
     next();

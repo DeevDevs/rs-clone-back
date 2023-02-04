@@ -1,5 +1,6 @@
 import User from "./../models/userModel";
 import Stats from "../models/statsModel";
+import Memoir from "../models/memoirModel";
 import { createUserBody } from "./../helperFns/newUserBody";
 import { defaultStats } from "../helperFns/staticValues";
 
@@ -42,6 +43,15 @@ export async function deleteOneUser(req, res) {
     const statsDeleted = await Stats.findByIdAndDelete(thisUser.statsID);
     if (!statsDeleted) throw new Error("No stats found with that ID");
 
+    const memoirsDeleted = thisUser.memoirIDs.map((memoir) => {
+      return new Promise((resolve, reject) => {
+        const deletedMemoir = Memoir.findByIdAndDelete(memoir);
+        if (!deletedMemoir) reject(new Error("Could not find memoir"));
+        resolve(deletedMemoir);
+      });
+    });
+    await Promise.allSettled(memoirsDeleted);
+
     const thisUserDeleted = await User.findByIdAndDelete(req.body.id);
     if (!thisUserDeleted) throw new Error("No user found with that ID");
 
@@ -59,7 +69,6 @@ export async function deleteOneUser(req, res) {
 export async function getOneUser(req, res) {
   try {
     const user = await User.findById(req.body.id);
-    // do not forget to remove password copy from the object later
     if (!user) throw new Error("No document found with that ID");
 
     res.status(200).json({

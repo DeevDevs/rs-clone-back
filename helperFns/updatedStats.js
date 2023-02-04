@@ -1,4 +1,4 @@
-export function updateStats(oldStats, memoir, condition) {
+exports.updateStats = (oldStats, memoir, condition) => {
   const newRate = countAverageRate(oldStats, memoir.rateValue, condition);
   const newContinents = updateNestedArray(
     oldStats.continents,
@@ -22,7 +22,7 @@ export function updateStats(oldStats, memoir, condition) {
     continents: newContinents,
   };
   return updateBody;
-}
+};
 
 function updateNestedArray(array, value, condition) {
   const newArray = [];

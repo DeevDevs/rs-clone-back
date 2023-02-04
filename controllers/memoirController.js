@@ -1,10 +1,10 @@
-import User from "./../models/userModel";
-import Memoir from "../models/memoirModel";
-import Stats from "../models/statsModel";
-import { updateStats } from "../helperFns/updatedStats";
-import MyError from "../helperFns/errorClass";
+const User = require("../models/userModel");
+const Memoir = require("../models/memoirModel");
+const Stats = require("../models/statsModel");
+const { updateStats } = require("../helperFns/updatedStats");
+const MyError = require("../helperFns/errorClass");
 
-export async function addNewMemoir(req, res, next) {
+exports.addNewMemoir = async (req, res, next) => {
   try {
     const newMemoir = await Memoir.create({ ...req.body });
     if (!newMemoir) return next(new MyError("Could not create a memoir", 404));
@@ -37,9 +37,9 @@ export async function addNewMemoir(req, res, next) {
       new MyError("Something went wrong while creating a memoir", 500)
     );
   }
-}
+};
 
-export async function deleteOneMemoir(req, res, next) {
+exports.deleteOneMemoir = async (req, res, next) => {
   try {
     const thisMemoir = await Memoir.findById(req.body.id);
     if (!thisMemoir)
@@ -76,9 +76,9 @@ export async function deleteOneMemoir(req, res, next) {
       new MyError("Something went wrong while deleting a memoir", 500)
     );
   }
-}
+};
 
-export async function getOneMemoir(req, res, next) {
+exports.getOneMemoir = async (req, res, next) => {
   try {
     const memoir = await Memoir.findById(req.body.id);
     if (!memoir) return next(new MyError("No memoir found with that ID", 404));
@@ -92,9 +92,9 @@ export async function getOneMemoir(req, res, next) {
       new MyError("Something went wrong while getting a memoir", 500)
     );
   }
-}
+};
 
-export async function updateOneMemoir(req, res, next) {
+exports.updateOneMemoir = async (req, res, next) => {
   try {
     const userStatsID = res.locals.user.statsID;
     const targetMemoirID = req.body.id;
@@ -129,7 +129,8 @@ export async function updateOneMemoir(req, res, next) {
         runValidators: true,
       }
     );
-    if (!updatedMemoir) return next(new MyError("No memoir found with that ID", 404));
+    if (!updatedMemoir)
+      return next(new MyError("No memoir found with that ID", 404));
 
     res.status(200).json({
       status: "success",
@@ -142,4 +143,4 @@ export async function updateOneMemoir(req, res, next) {
       new MyError("Something went wrong while updating a memoir", 500)
     );
   }
-}
+};

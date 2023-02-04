@@ -1,4 +1,4 @@
-export function processError(error, req, res, next) {
+exports.processError = async (error, req, res, next) => {
   const errorCopy = distinguishError(error);
   res.status(errorCopy.errorCode).json({
     status: errorCopy.errorMessage,

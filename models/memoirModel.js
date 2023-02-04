@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const memoirSchema = new mongoose.Schema({
   tripName: {
@@ -73,4 +73,4 @@ const memoirSchema = new mongoose.Schema({
 
 const Memoir = mongoose.model("Memoir", memoirSchema);
 
-export default Memoir;
+module.exports = Memoir;

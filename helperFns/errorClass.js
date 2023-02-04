@@ -9,4 +9,4 @@ class MyError extends Error {
   }
 }
 
-export default MyError;
+module.exports = MyError;

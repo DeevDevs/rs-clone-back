@@ -1,4 +1,4 @@
-export function createUserBody (body) {
+exports.createUserBody = (body) => {
   return {
     name: body.name,
     email: body.email,
@@ -8,4 +8,4 @@ export function createUserBody (body) {
     memoirIDs: [],
     passwordConfirm: body.passwordConfirm,
   };
-}
+};

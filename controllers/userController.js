@@ -1,9 +1,9 @@
-import User from "./../models/userModel";
-import Stats from "../models/statsModel";
-import Memoir from "../models/memoirModel";
-import MyError from "../helperFns/errorClass";
+const User = require("../models/userModel");
+const Stats = require("../models/statsModel");
+const Memoir = require("../models/memoirModel");
+const MyError = require("../helperFns/errorClass");
 
-export async function deleteOneUser(req, res, next) {
+exports.deleteOneUser = async (req, res, next) => {
   try {
     const thisUser = await User.findById(req.body.id);
     if (!thisUser) return next(new MyError("No user found with that ID", 404));
@@ -34,9 +34,9 @@ export async function deleteOneUser(req, res, next) {
       new MyError("Something went wrong while deleting user profile", 500)
     );
   }
-}
+};
 
-export async function getOneUser(req, res, next) {
+exports.getOneUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.body.id);
     if (!user) return next(new MyError("No user found with that ID", 404));
@@ -46,13 +46,14 @@ export async function getOneUser(req, res, next) {
       data: user,
     });
   } catch (error) {
+    console.log(error);
     return next(
       new MyError("Something went wrong while getting user profile", 500)
     );
   }
-}
+};
 
-export async function updateOneUser(req, res, next) {
+exports.updateOneUser = async (req, res, next) => {
   try {
     const id = req.body.id;
     const updateBody = JSON.parse(JSON.stringify(req.body));
@@ -78,4 +79,4 @@ export async function updateOneUser(req, res, next) {
       )
     );
   }
-}
+};

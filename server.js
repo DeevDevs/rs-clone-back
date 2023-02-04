@@ -1,6 +1,6 @@
-import application from "./app";
-import mongoose, { ConnectOptions } from "mongoose";
-import dotenv from "dotenv";
+const application = require("./app.js");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 
 dotenv.config({ path: `./config.env` });
 const DB = process.env.DATABASE.replace(
@@ -14,7 +14,7 @@ mongoose
     useNewUrlParser: true,
     autoIndex: true,
     useUnifiedTopology: true,
-  } as ConnectOptions)
+  })
   .then(() => console.log("DB connections successful"));
 
 mongoose.set("strictQuery", true);

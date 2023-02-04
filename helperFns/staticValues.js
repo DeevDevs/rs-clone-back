@@ -1,4 +1,4 @@
-export const defaultStats = {
+exports.defaultStats = {
   places: 0,
   days: 0,
   averageRate: 0,

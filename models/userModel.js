@@ -1,6 +1,5 @@
-import mongoose from "mongoose";
-import validator from "validator";
-// import crypto from "crypto";
+const mongoose = require("mongoose");
+const validator = require("validator");
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -46,7 +45,7 @@ const userSchema = new mongoose.Schema({
     required: [true, "You have to confirm your password"],
     trim: true,
     validate: {
-      validator: function (passCopy: string) {
+      validator: function (passCopy) {
         return passCopy === this.password;
       },
       message: "Passwords have to match",
@@ -61,4 +60,4 @@ userSchema.pre("save", async function (next) {
 
 const User = mongoose.model("User", userSchema);
 
-export default User;
+module.exports = User;

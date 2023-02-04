@@ -1,9 +1,9 @@
-import Stats from "../models/statsModel";
-import { updateStats } from "../helperFns/updatedStats";
-import Memoir from "../models/memoirModel";
-import MyError from "../helperFns/errorClass";
+const Stats = require("../models/statsModel");
+const { updateStats } = require("../helperFns/updatedStats");
+const Memoir = require("../models/memoirModel");
+const MyError = require("../helperFns/errorClass");
 
-export async function getOneStats(req, res, next) {
+exports.getOneStats = async (req, res, next) => {
   try {
     const stats = await Stats.findById(req.body.statsID);
     if (!stats)
@@ -18,9 +18,9 @@ export async function getOneStats(req, res, next) {
       new MyError("Something went wrong while getting user statistics", 500)
     );
   }
-}
+};
 
-export async function updateOneStats(req, res, next) {
+exports.updateOneStats = async (req, res, next) => {
   try {
     if (!req.body.statsID || !req.body.memoirID)
       return next(
@@ -52,4 +52,4 @@ export async function updateOneStats(req, res, next) {
       new MyError("Something went wrong while updating user statistics", 500)
     );
   }
-}
+};

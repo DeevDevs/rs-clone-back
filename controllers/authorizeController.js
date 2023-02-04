@@ -1,13 +1,13 @@
-import jwt from "jsonwebtoken";
-import User from "./../models/userModel";
-import Stats from "../models/statsModel";
-import { defaultStats } from "../helperFns/staticValues";
-import { promisify } from "util";
-import { createCookieOptions } from "../helperFns/newCookieOpt";
-import { createToken } from "../helperFns/newToken";
-import MyError from "../helperFns/errorClass";
+const jwt = require("jsonwebtoken");
+const User = require("../models/userModel");
+const Stats = require("../models/statsModel");
+const { defaultStats } = require("../helperFns/staticValues");
+const { promisify } = require("util");
+const { createCookieOptions } = require("../helperFns/newCookieOpt");
+const { createToken } = require("../helperFns/newToken");
+const MyError = require("../helperFns/errorClass");
 
-const sendToken = (user, statusCode, req, res) => {
+const sendToken = async (user, statusCode, req, res) => {
   try {
     const token = createToken(user._id);
     const cookieOptions = createCookieOptions(90);
@@ -31,7 +31,7 @@ const sendToken = (user, statusCode, req, res) => {
   }
 };
 
-export const signUp = async (req, res, next) => {
+exports.signUp = async (req, res, next) => {
   try {
     const newUser = await User.create({
       name: req.body.name,
@@ -60,14 +60,15 @@ export const signUp = async (req, res, next) => {
       return next(new MyError("Could not update user with that stats ID", 503));
 
     sendToken(readyUser, 201, req, res);
+    return;
   } catch (error) {
     if (error.name === "ValidationError")
       return next(new MyError(error.name, 99000));
-    return next(new MyError("Something went wrong while signup", 500));
+    return next(new MyError("Something went wrong while signup", error.code));
   }
 };
 
-export const login = async (req, res, next) => {
+exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     if (!email || !password)
@@ -83,7 +84,7 @@ export const login = async (req, res, next) => {
   }
 };
 
-export const logout = (req, res) => {
+exports.logout = (req, res) => {
   res.cookie("jwt", "loggedout", {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
@@ -91,7 +92,7 @@ export const logout = (req, res) => {
   res.status(200).json({ status: "success" });
 };
 
-export const isLoggedIn = async (req, res, next) => {
+exports.isLoggedIn = async (req, res, next) => {
   try {
     if (req.cookies.jwt && req.cookies.jwt !== "loggedout") {
       const decoded = await promisify(jwt.verify)(
@@ -116,7 +117,7 @@ export const isLoggedIn = async (req, res, next) => {
   next();
 };
 
-export const protect = async (req, res, next) => {
+exports.protect = async (req, res, next) => {
   try {
     let token;
     if (
@@ -132,7 +133,8 @@ export const protect = async (req, res, next) => {
 
     const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
     const currentUser = await User.findById(decoded.id);
-    if (!currentUser) return next(new MyError("No use found with such ID", 404));
+    if (!currentUser)
+      return next(new MyError("No use found with such ID", 404));
 
     req.user = currentUser;
     res.locals.user = currentUser;

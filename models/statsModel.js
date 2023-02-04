@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const statsSchema = new mongoose.Schema({
   places: {
@@ -37,4 +37,4 @@ const statsSchema = new mongoose.Schema({
 
 const Stats = mongoose.model("Stats", statsSchema);
 
-export default Stats;
+module.exports = Stats;

@@ -6,7 +6,8 @@ import MyError from "../helperFns/errorClass";
 export async function getOneStats(req, res, next) {
   try {
     const stats = await Stats.findById(req.body.statsID);
-    if (!stats) next(new MyError("No statistics found for this user", 404));
+    if (!stats)
+      return next(new MyError("No statistics found for this user", 404));
 
     res.status(200).json({
       status: "success",
@@ -22,21 +23,23 @@ export async function getOneStats(req, res, next) {
 export async function updateOneStats(req, res, next) {
   try {
     if (!req.body.statsID || !req.body.memoirID)
-      next(
+      return next(
         new MyError("Wrong stats or wrong memoir is selected (devError)", 400)
       );
     const statsID = req.body.statsID;
     const oldStats = await Stats.findById(statsID);
-    if (!oldStats) next(new MyError("Could not find stats with that ID", 404));
+    if (!oldStats)
+      return next(new MyError("Could not find stats with that ID", 404));
 
     const newMemoir = await Memoir.findById(req.body.memoirID);
-    if (!oldStats) next(new MyError("Could not find memoir with that ID", 404));
+    if (!oldStats)
+      return next(new MyError("Could not find memoir with that ID", 404));
 
     const updateBody = updateStats(oldStats, newMemoir, req.body.condition);
     const updatedStats = await Stats.findByIdAndUpdate(statsID, updateBody, {
       new: true,
     });
-    if (!updatedStats) next(new MyError("Could not update stats", 500));
+    if (!updatedStats) return next(new MyError("Could not update stats", 500));
 
     res.status(200).json({
       status: "success",

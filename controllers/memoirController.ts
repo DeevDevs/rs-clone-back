@@ -129,7 +129,7 @@ export async function updateOneMemoir(req, res, next) {
         runValidators: true,
       }
     );
-    if (!updatedMemoir) next(new MyError("No memoir found with that ID", 404));
+    if (!updatedMemoir) return next(new MyError("No memoir found with that ID", 404));
 
     res.status(200).json({
       status: "success",

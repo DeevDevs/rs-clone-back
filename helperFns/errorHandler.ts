@@ -11,5 +11,9 @@ function distinguishError(error) {
     errorCopy.errorMessage = "User with such email already exists";
     errorCopy.errorCode = 400;
   }
+  if (error.errorCode === 99000) {
+    errorCopy.errorMessage = "Passwords have to match";
+    errorCopy.errorCode = 400;
+  }
   return errorCopy;
 }

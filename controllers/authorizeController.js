@@ -94,7 +94,7 @@ exports.logout = (req, res) => {
 
 exports.isLoggedIn = async (req, res, next) => {
   try {
-    console.log(req);
+    console.log(req.cookies);
     if (req.cookies.jwt && req.cookies.jwt !== "loggedout") {
       const decoded = await promisify(jwt.verify)(
         req.cookies.jwt,

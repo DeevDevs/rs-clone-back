@@ -16,13 +16,13 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(
   cors({
     credentials: true,
-    origin: "https://wondrous-baklava-397536.netlify.app/",
+    origin: "https://wondrous-baklava-397536.netlify.app",
   })
 );
 app.use((req, res, next) => {
   res.header({
     "Access-Control-Allow-Origin":
-      "https://wondrous-baklava-397536.netlify.app/",
+      "https://wondrous-baklava-397536.netlify.app",
   });
   next();
 });

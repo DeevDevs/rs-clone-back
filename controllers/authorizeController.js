@@ -88,10 +88,8 @@ exports.logout = (req, res) => {
   res.cookie("jwt", "loggedout", {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
-    sameSite: "None",
-    secure: true,
   });
-  res.status(200).json({ status: "success" });
+  res.status(200).json({ status: "success", token: "loggedout" });
 };
 
 exports.isLoggedIn = async (req, res, next) => {
@@ -123,6 +121,7 @@ exports.isLoggedIn = async (req, res, next) => {
 exports.protect = async (req, res, next) => {
   try {
     let token;
+    console.log(req.cookiejwt);
     if (
       req.headers.authorization &&
       req.headers.authorization.startsWith("Bearer")

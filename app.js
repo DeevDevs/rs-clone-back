@@ -6,7 +6,6 @@ const memoirRoutes = require("./routes/memoirRoutes");
 const mongoSanitize = require("express-mongo-sanitize");
 const compression = require("compression");
 const cookieParser = require("cookie-parser");
-const helmet = require("helmet");
 
 const { processError } = require("./helperFns/errorHandler");
 const cors = require("cors");
@@ -16,7 +15,6 @@ const app = express();
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
-app.use(helmet());
 // app.use(
 //   cors({
 //     credentials: true,

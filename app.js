@@ -11,12 +11,8 @@ const cors = require("cors");
 
 const app = express();
 
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-  })
-);
-app.options("*", cors());
+app.use(cors());
+app.options("http://localhost:3000", cors());
 app.use(express.json({ limit: "10kb" }));
 app.use(mongoSanitize());
 app.use(express.static(path.join(__dirname, "public")));

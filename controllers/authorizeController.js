@@ -95,10 +95,10 @@ exports.logout = (req, res) => {
 
 exports.isLoggedIn = async (req, res, next) => {
   try {
-    console.log(req.cookies, req.cookie);
-    if (req.cookies.jwt && req.cookies.jwt !== "loggedout") {
+    console.log(req.body.token);
+    if (req.body.token && req.body.token !== "loggedout") {
       const decoded = await promisify(jwt.verify)(
-        req.cookies.jwt,
+        req.body.token,
         process.env.JWT_SECRET
       );
       const currentUser = await User.findById(decoded.id);

@@ -14,7 +14,7 @@ const app = express();
 app.use(cors());
 app.options("*", cors());
 app.use((req, res, next) => {
-  res.header({ "Access-Control-Allow-Origin": "*" });
+  res.header({ "Access-Control-Allow-Origin": "http://localhost:3000" });
   next();
 }); 
 app.use(express.json({ limit: "10kb" }));

@@ -11,22 +11,18 @@ const cors = require("cors");
 
 const app = express();
 
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-  })
-);
-// app.options("*", cors());
+app.use(express.static(path.join(__dirname, "public")));
+app.use(cors());
+app.options("*", cors());
 // app.use((req, res, next) => {
 //   res.header({ "Access-Control-Allow-Origin": "http://localhost:3000" });
 //   res.header({ "Access-Control-Allow-Credentials": "true" });
 //   next();
 // });
 app.use(express.json({ limit: "10kb" }));
-app.use(mongoSanitize());
-app.use(express.static(path.join(__dirname, "public")));
-app.use(compression());
 app.use(cookieParser());
+app.use(mongoSanitize());
+app.use(compression());
 
 app.use("/api/user", userRoutes);
 app.use("/api/stats", statsRoutes);

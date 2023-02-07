@@ -16,7 +16,7 @@ const sendToken = async (user, statusCode, req, res) => {
       cookieOptions.secure = true; // this is specific for HEROKU (это необходимо для работы с Heroku)
     // adds a cookie to response object (добавляет cookie в ответ)
     res.cookie("jwt", token, cookieOptions);
-    res.headers.authorization = `Bearer ${token}`;
+    req.headers.authorization = `Bearer ${token}`;
     user.password = undefined;
     res.status(statusCode).json({
       status: "success",

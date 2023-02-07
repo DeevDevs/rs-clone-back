@@ -29,6 +29,7 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Headers":
       "Content-Type, Authorization, accept, access-control-allow-origin",
   });
+  console.log(req.method);
   if ("OPTIONS" == req.method) res.send(200);
   else next();
 });

@@ -143,13 +143,13 @@ exports.protect = async (req, res, next) => {
     if (!currentUser)
       return next(new MyError("No use found with such ID", 404));
 
-    // req.user = currentUser;
-    res.locals.user = currentUser;
+    req.user = currentUser;
+    // res.locals.user = currentUser;
     next();
   } catch (error) {
     return next(
       new MyError("You are not authorized to perform this action", 401)
     );
   }
-  next();
+  // next();
 };

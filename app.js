@@ -26,6 +26,7 @@ app.use(
 app.use((req, res, next) => {
   res.header({
     "Access-Control-Allow-Origin": "http://localhost:3000",
+    "Access-Control-Allow-Headers": "Authorization",
   });
   next();
 });

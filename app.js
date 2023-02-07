@@ -26,10 +26,13 @@ app.use(
 app.use((req, res, next) => {
   res.header({
     "Access-Control-Allow-Origin": "http://localhost:3000",
-    "Access-Control-Allow-Headers": "authorization, content-type",
+    "Access-Control-Allow-Headers":
+      "Content-Type, Authorization, accept, access-control-allow-origin",
   });
-  next();
+  if ("OPTIONS" == req.method) res.send(200);
+  else next();
 });
+
 app.use(helmet());
 app.use(express.json({ limit: "10kb" }));
 app.use(mongoSanitize());

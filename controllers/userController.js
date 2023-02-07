@@ -50,7 +50,7 @@ exports.getOneUser = async (req, res, next) => {
     const currentUser = await User.findById(decoded.id);
     if (!currentUser)
       return next(new MyError("No use found with such ID. Protected!", 404));
-    console.log(req.body.id);
+    console.log(req.body, req.body.id);
     const user = await User.findById(req.body.id);
     if (!user) return next(new MyError("No user found with that ID", 404));
 

@@ -41,6 +41,7 @@ exports.deleteOneUser = async (req, res, next) => {
 exports.getOneUser = async (req, res, next) => {
   try {
     let token;
+    console.log(req.params.id);
     if (req.cookies.jwt) token = req.cookies.jwt;
     if (!token || req.cookies.jwt === "loggedout")
       return next(
@@ -50,8 +51,8 @@ exports.getOneUser = async (req, res, next) => {
     const currentUser = await User.findById(decoded.id);
     if (!currentUser)
       return next(new MyError("No use found with such ID. Protected!", 404));
-    console.log(req.body, req.body.id);
-    const user = await User.findById(req.body.id);
+    console.log(req.params.id);
+    const user = await User.findById(req.params.id);
     if (!user) return next(new MyError("No user found with that ID", 404));
 
     res.status(200).json({

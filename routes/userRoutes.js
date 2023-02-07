@@ -8,7 +8,7 @@ router.post("/signup", authorizeController.signUp);
 router.post("/login", authorizeController.login);
 router.post("/logout", authorizeController.logout);
 router.post("/isloggedin", authorizeController.isLoggedIn);
-router.patch("/oneUser", userController.getOneUser);
+router.get("/oneUser", userController.getOneUser);
 router.use(authorizeController.protect);
 
 

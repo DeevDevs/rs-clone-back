@@ -6,6 +6,7 @@ const memoirRoutes = require("./routes/memoirRoutes");
 const mongoSanitize = require("express-mongo-sanitize");
 const compression = require("compression");
 const cookieParser = require("cookie-parser");
+const helmet = require("helmet");
 
 const { processError } = require("./helperFns/errorHandler");
 const cors = require("cors");

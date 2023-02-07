@@ -8,8 +8,8 @@ router.post("/signup", authorizeController.signUp);
 router.post("/login", authorizeController.login);
 router.post("/logout", authorizeController.logout);
 router.post("/isloggedin", authorizeController.isLoggedIn);
-router.use(authorizeController.protect);
 router.post("/oneUser", userController.getOneUser);
+router.use(authorizeController.protect);
 
 
 router.delete("/", userController.deleteOneUser);

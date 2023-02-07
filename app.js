@@ -29,7 +29,7 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Headers":
       "Content-Type, Authorization, accept, access-control-allow-origin, Cookie",
     "Access-Control-Allow-Credentials": "true",
-    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE'
+    'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE'
   });
   console.log(req.method);
   if ("OPTIONS" == req.method) {
@@ -37,7 +37,7 @@ app.use((req, res, next) => {
       "Access-Control-Allow-Origin": "http://localhost:3000",
       "Access-Control-Allow-Headers":
         "Content-Type, Authorization, accept, access-control-allow-origin, Cookie",
-      "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE",
+      "Access-Control-Allow-Methods": "GET, PUT, POST, DELETE",
       // "Access-Control-Allow-Credentials": "true",
     });
     res.send(200);

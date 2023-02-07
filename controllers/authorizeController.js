@@ -125,7 +125,8 @@ exports.isLoggedIn = async (req, res, next) => {
 exports.protect = async (req, res, next) => {
   try {
     let token;
-    console.log(req.cookie.jwt);
+    console.log(req.cookies.jwt);
+    console.log(req.cookies);
     if (
       req.headers.authorization &&
       req.headers.authorization.startsWith("Bearer")

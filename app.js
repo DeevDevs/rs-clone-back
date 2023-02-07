@@ -33,18 +33,19 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Credentials": "true",
     "Access-Control-Allow-Methods": "GET, PATCH, POST, DELETE",
   });
-  // console.log(req.method);
-  // if ("OPTIONS" == req.method) {
-  //   res.header({
-  //     "Access-Control-Allow-Origin": "wondrous-baklava-397536",
-  //     // "Access-Control-Allow-Origin": "http://localhost:3000",
-  //     "Access-Control-Allow-Headers":
-  //       "Content-Type, Authorization, accept, access-control-allow-origin, Cookie",
-  //     "Access-Control-Allow-Methods": "GET, PATCH, POST, DELETE",
-  //     // "Access-Control-Allow-Credentials": "true",
-  //   });
-  //   res.send(200);
-  // } else next();
+  console.log(req.method);
+  if ("OPTIONS" == req.method) {
+    res.header({
+      "Access-Control-Allow-Origin":
+        "https://wondrous-baklava-397536.netlify.app",
+      // "Access-Control-Allow-Origin": "http://localhost:3000",
+      "Access-Control-Allow-Headers":
+        "Content-Type, Authorization, accept, access-control-allow-origin, Cookie",
+      "Access-Control-Allow-Methods": "GET, PATCH, POST, DELETE",
+      // "Access-Control-Allow-Credentials": "true",
+    });
+    res.send(200);
+  } else next();
 });
 
 app.use(helmet());

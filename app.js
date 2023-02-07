@@ -25,7 +25,8 @@ app.use(express.static(path.join(__dirname, "public")));
 // );
 app.use((req, res, next) => {
   res.header({
-    "Access-Control-Allow-Origin": "wondrous-baklava-397536",
+    "Access-Control-Allow-Origin":
+      "https://wondrous-baklava-397536.netlify.app",
     // "Access-Control-Allow-Origin": "http://localhost:3000",
     "Access-Control-Allow-Headers":
       "Content-Type, Authorization, accept, access-control-allow-origin, Cookie",

@@ -125,6 +125,7 @@ exports.isLoggedIn = async (req, res, next) => {
 exports.protect = async (req, res, next) => {
   try {
     let token;
+    console.log(req);
     console.log(req.cookies.jwt);
     console.log(req.cookies);
     if (
@@ -151,4 +152,5 @@ exports.protect = async (req, res, next) => {
       new MyError("You are not authorized to perform this action", 401)
     );
   }
+  next();
 };

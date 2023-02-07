@@ -100,7 +100,8 @@ exports.isLoggedIn = async (req, res, next) => {
     // if (req.body.token && req.body.token !== "loggedout") {
     if (req.cookies.jwt && req.cookies.jwt !== "loggedout") {
       const decoded = await promisify(jwt.verify)(
-        req.body.token,
+        // req.body.token,
+        req.cookies.jwt,
         process.env.JWT_SECRET
       );
       const currentUser = await User.findById(decoded.id);

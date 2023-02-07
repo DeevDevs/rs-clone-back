@@ -16,7 +16,6 @@ const sendToken = async (user, statusCode, req, res) => {
       cookieOptions.secure = true; // this is specific for HEROKU (это необходимо для работы с Heroku)
     // adds a cookie to response object (добавляет cookie в ответ)
     res.cookie("jwt", token, cookieOptions);
-    console.log(res);
     user.password = undefined;
     res.status(statusCode).json({
       status: "success",
@@ -89,6 +88,8 @@ exports.logout = (req, res) => {
   res.cookie("jwt", "loggedout", {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
+    secure: true,
+    sameSite: "None",
   });
   res.status(200).json({ status: "success", token: "loggedout" });
 };
@@ -96,7 +97,8 @@ exports.logout = (req, res) => {
 exports.isLoggedIn = async (req, res, next) => {
   try {
     console.log(req.body.token);
-    if (req.body.token && req.body.token !== "loggedout") {
+    // if (req.body.token && req.body.token !== "loggedout") {
+    if (req.cookies.jwt && req.cookies.jwt !== "loggedout") {
       const decoded = await promisify(jwt.verify)(
         req.body.token,
         process.env.JWT_SECRET

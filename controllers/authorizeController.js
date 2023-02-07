@@ -151,5 +151,5 @@ exports.protect = async (req, res, next) => {
       new MyError("You are not authorized to perform this action", 401)
     );
   }
-  // next();
+  next();
 };

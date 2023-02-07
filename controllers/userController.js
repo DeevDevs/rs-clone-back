@@ -38,6 +38,17 @@ exports.deleteOneUser = async (req, res, next) => {
 
 exports.getOneUser = async (req, res, next) => {
   try {
+    let token;
+    if (req.cookies.jwt) token = req.cookies.jwt;
+    if (!token)
+      return next(
+        new MyError("Please, signup or login to perform this action", 401)
+      );
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+    const currentUser = await User.findById(decoded.id);
+    if (!currentUser)
+      return next(new MyError("No use found with such ID. Protected!", 404));
+
     const user = await User.findById(req.body.id);
     if (!user) return next(new MyError("No user found with that ID", 404));
 

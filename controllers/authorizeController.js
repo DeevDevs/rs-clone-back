@@ -107,7 +107,7 @@ exports.isLoggedIn = async (req, res, next) => {
       );
       const currentUser = await User.findById(decoded.id);
       if (!currentUser) return next(new MyError("User is not logged in", 401));
-
+      res.set("Authorization", `Bearer ${req.cookies.jwt}`);
       res.status(200).json({
         status: "success",
         data: currentUser,

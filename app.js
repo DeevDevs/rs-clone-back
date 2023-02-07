@@ -30,8 +30,14 @@ app.use((req, res, next) => {
       "Content-Type, Authorization, accept, access-control-allow-origin, Cookie",
   });
   console.log(req.method);
-  if ("OPTIONS" == req.method) res.send(200);
-  else next();
+  if ("OPTIONS" == req.method) {
+    res.header({
+      "Access-Control-Allow-Origin": "http://localhost:3000",
+      "Access-Control-Allow-Headers":
+        "Content-Type, Authorization, accept, access-control-allow-origin, Cookie",
+    });
+    res.send(200);
+  } else next();
 });
 
 app.use(helmet());

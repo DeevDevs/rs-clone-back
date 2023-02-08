@@ -7,8 +7,9 @@ const jwt = require("jsonwebtoken");
 
 exports.deleteOneUser = async (req, res, next) => {
   try {
-    if (req.body.id === req.user.id) return next(new MyError("You cannot delete another user profile", 401));
-    const thisUser = await User.findById(req.body.id);
+    if (req.query.id === req.user.id)
+      return next(new MyError("You cannot delete another user profile", 401));
+    const thisUser = await User.findById(req.query.id);
     if (!thisUser) return next(new MyError("No user found with that ID", 404));
 
     const statsDeleted = await Stats.findByIdAndDelete(thisUser.statsID);
@@ -26,7 +27,7 @@ exports.deleteOneUser = async (req, res, next) => {
     });
     await Promise.allSettled(memoirsDeleted);
 
-    await User.findByIdAndDelete(req.body.id);
+    await User.findByIdAndDelete(req.query.id);
 
     res.status(204).json({
       status: "success",

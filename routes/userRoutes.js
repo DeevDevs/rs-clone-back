@@ -13,6 +13,6 @@ router.get("/isloggedin", authorizeController.isLoggedIn);
 router.use(authorizeController.protect);
 router.get("/oneUser", userController.getOneUser);
 router.patch("/updateUser", userController.updateOneUser);
-router.delete("/", userController.deleteOneUser);
+router.delete("/deleteUser", userController.deleteOneUser);
 
 module.exports = router;

@@ -7,8 +7,6 @@ const jwt = require("jsonwebtoken");
 
 exports.deleteOneUser = async (req, res, next) => {
   try {
-    if (req.query.id === req.user.id)
-      return next(new MyError("You cannot delete another user profile", 401));
     const thisUser = await User.findById(req.query.id);
     if (!thisUser) return next(new MyError("No user found with that ID", 404));
 

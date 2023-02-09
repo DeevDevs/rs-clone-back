@@ -148,3 +148,41 @@ exports.updateOneMemoir = async (req, res, next) => {
     );
   }
 };
+
+exports.getPreviewData = async (req, res, next) => {
+  try {
+    const memoirIDs = req.user.memoirIDs;
+    if (memoirIDs.length === 0) {
+      res.status(200).json({
+        status: "success",
+        data: [],
+      });
+    }
+    const promises = await memoirIDs.map((memoirID) => {
+      return new Promise(async (resolve) => {
+        const memoir = await Memoir.findById(targetMemoirID);
+        if (memoir) {
+          const previewData = {
+            memoirID: memoir._id,
+            memoirLocation: memoir.longLat,
+            memoirName: memoir.tripName,
+          };
+          resolve(previewData);
+        }
+        reject(new MyError("Could not find a memoir for preview", 404));
+      });
+    });
+
+    const previews = await Promise.allSettled(promises);
+
+    res.status(200).json({
+      status: "success",
+      data: previews,
+    });
+  } catch (error) {
+    console.log(error);
+    return next(
+      new MyError("Something went wrong while updating a memoir", 500)
+    );
+  }
+};

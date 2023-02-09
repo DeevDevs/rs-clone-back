@@ -5,7 +5,7 @@ const MyError = require("../helperFns/errorClass");
 
 exports.getOneStats = async (req, res, next) => {
   try {
-    const stats = await Stats.findById(req.body.statsID);
+    const stats = await Stats.findById(req.query.id);
     if (!stats)
       return next(new MyError("No statistics found for this user", 404));
 

@@ -28,6 +28,20 @@ exports.addNewMemoir = async (req, res, next) => {
     if (!updatedUser)
       return next(new MyError("Could not update user with that ID", 500));
 
+    //now, update stats
+    const oldStats = await Stats.findById(updatedUser.statsID);
+    if (!oldStats)
+      return next(new MyError("Could not find stats with that ID", 404));
+    const updatedStatsBody = updateStats(oldStats, newMemoir, "add");
+    const updatedStats = await Stats.findByIdAndUpdate(
+      updatedUser.statsID,
+      updatedStatsBody,
+      {
+        new: true,
+      }
+    );
+    if (!updatedStats) return next(new MyError("Could not update stats", 500));
+
     res.status(201).json({
       status: "success",
       data: newMemoir,
@@ -54,6 +68,20 @@ exports.deleteOneMemoir = async (req, res, next) => {
 
     const thisUser = await User.findById(thisUserID);
     if (!thisUser) return next(new MyError("No user found with that ID", 404));
+
+    //now, update stats
+    const oldStats = await Stats.findById(thisUser.statsID);
+    if (!oldStats)
+      return next(new MyError("Could not find stats for this user", 404));
+    const updatedStatsBody = updateStats(oldStats, thisMemoir, "remove");
+    const updatedStats = await Stats.findByIdAndUpdate(
+      updatedUser.statsID,
+      updatedStatsBody,
+      {
+        new: true,
+      }
+    );
+    if (!updatedStats) return next(new MyError("Could not update stats", 500));
 
     await Memoir.findByIdAndDelete(memoirID);
 
@@ -114,17 +142,17 @@ exports.updateOneMemoir = async (req, res, next) => {
 
     const initialStatsUpdateBody = updateStats(oldStats, oldMemoir, "remove");
 
-    const updatedStats = await Stats.findByIdAndUpdate(
-      userStatsID,
-      initialStatsUpdateBody,
-      {
-        new: true,
-      }
-    );
-    if (!updatedStats)
-      return next(
-        new MyError("Could not update stats while memoir update", 500)
-      );
+    // const updatedStats = await Stats.findByIdAndUpdate(
+    //   userStatsID,
+    //   initialStatsUpdateBody,
+    //   {
+    //     new: true,
+    //   }
+    // );
+    // if (!updatedStats)
+    //   return next(
+    //     new MyError("Could not update stats while memoir update", 500)
+    //   );
 
     const updateBody = { ...req.body };
     delete updateBody.id;
@@ -139,6 +167,21 @@ exports.updateOneMemoir = async (req, res, next) => {
     );
     if (!updatedMemoir)
       return next(new MyError("No memoir found with that ID", 404));
+
+    //now, update stats
+    const updatedStatsBody = updateStats(
+      initialStatsUpdateBody,
+      updatedMemoir,
+      "add"
+    );
+    const updatedStats = await Stats.findByIdAndUpdate(
+      updatedUser.statsID,
+      updatedStatsBody,
+      {
+        new: true,
+      }
+    );
+    if (!updatedStats) return next(new MyError("Could not update stats", 500));
 
     res.status(200).json({
       status: "success",

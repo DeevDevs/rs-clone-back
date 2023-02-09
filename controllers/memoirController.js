@@ -151,6 +151,10 @@ exports.updateOneMemoir = async (req, res, next) => {
 
 exports.getPreviewData = async (req, res, next) => {
   try {
+    if (!req.user)
+      return next(
+        new MyError("Please, signup or login to perform this action", 400)
+      );
     const memoirIDs = req.user.memoirIDs;
     if (memoirIDs.length === 0) {
       res.status(200).json({

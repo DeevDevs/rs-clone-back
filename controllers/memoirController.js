@@ -45,7 +45,9 @@ exports.deleteOneMemoir = async (req, res, next) => {
     const thisUserID = req.user._id;
     const memoirID = req.query.id;
     if (!memoirID)
-      return next(new MyError("Please, the memoir ID you want to delete ", 400));
+      return next(
+        new MyError("Please, the memoir ID you want to delete ", 400)
+      );
     const thisMemoir = await Memoir.findById(memoirID);
     if (!thisMemoir)
       return next(new MyError("No memoir found with that ID", 404));
@@ -123,6 +125,7 @@ exports.updateOneMemoir = async (req, res, next) => {
       );
 
     const updateBody = { ...req.body };
+    delete updateBody.id;
 
     const updatedMemoir = await Memoir.findByIdAndUpdate(
       targetMemoirID,

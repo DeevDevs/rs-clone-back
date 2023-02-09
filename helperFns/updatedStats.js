@@ -1,4 +1,5 @@
 exports.updateStats = (oldStats, memoir, condition) => {
+  console.log(memoir);
   const newRate = countAverageRate(oldStats, memoir.rateValue, condition);
   const newContinents = updateNestedArray(
     oldStats.continents,

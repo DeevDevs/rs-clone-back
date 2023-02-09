@@ -151,6 +151,7 @@ exports.updateOneMemoir = async (req, res, next) => {
 
 exports.getPreviewData = async (req, res, next) => {
   try {
+    console.log(req.query, req.user);
     if (!req.query.id)
       return next(new MyError("Please, fix the request URL", 400));
 

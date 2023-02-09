@@ -8,7 +8,7 @@ router.use(authorizeController.protect);
 
 router.post("/newMemoir", memoirController.addNewMemoir);
 router.delete("/deleteMemoir", memoirController.deleteOneMemoir);
-router.get("/", memoirController.getOneMemoir);
-router.patch("/", memoirController.updateOneMemoir);
+router.get("/getMemoir", memoirController.getOneMemoir);
+router.patch("/updateMemoir", memoirController.updateOneMemoir);
 
 module.exports = router;

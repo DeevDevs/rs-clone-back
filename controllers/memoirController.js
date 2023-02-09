@@ -162,6 +162,7 @@ exports.getPreviewData = async (req, res, next) => {
         status: "success",
         data: [],
       });
+      next();
     }
     const promises = await memoirIDs.map((targetMemoirID) => {
       return new Promise(async (resolve) => {

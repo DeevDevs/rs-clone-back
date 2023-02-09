@@ -57,6 +57,7 @@ exports.getOneUser = async (req, res, next) => {
 
 exports.updateOneUser = async (req, res, next) => {
   try {
+    if (!req.body) return next(new MyError("Please, provide user data", 400));
     const id = req.body.id;
     const updateBody = JSON.parse(JSON.stringify(req.body));
 

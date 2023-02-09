@@ -4,9 +4,9 @@ const authorizeController = require("../controllers/authorizeController");
 
 const router = express.Router();
 
-router.patch("/", statsController.updateOneStats);
-
 router.use(authorizeController.protect);
 router.get("/", statsController.getOneStats);
+router.patch("/", statsController.updateOneStats);
+
 
 module.exports = router;

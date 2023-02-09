@@ -10,6 +10,5 @@ router.post("/newMemoir", memoirController.addNewMemoir);
 router.delete("/deleteMemoir", memoirController.deleteOneMemoir);
 router.get("/getMemoir", memoirController.getOneMemoir);
 router.patch("/updateMemoir", memoirController.updateOneMemoir);
-router.get("/previews", memoirController.getPreviewData);
 
 module.exports = router;

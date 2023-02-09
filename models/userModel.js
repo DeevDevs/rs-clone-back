@@ -20,10 +20,15 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "default.jpg",
   },
-  role: {
+  bio: {
     type: String,
-    enum: ["user", "admin"],
-    default: "user",
+    default: "Please, tell us about yourself a little.",
+  },
+  bio: {
+    type: String,
+  },
+  age: {
+    type: Number,
   },
   statsID: {
     type: String,

@@ -82,7 +82,7 @@ exports.deleteOneMemoir = async (req, res, next) => {
 
 exports.getOneMemoir = async (req, res, next) => {
   try {
-    const memoir = await Memoir.findById(req.body.id);
+    const memoir = await Memoir.findById(req.query.id);
     if (!memoir) return next(new MyError("No memoir found with that ID", 404));
 
     res.status(200).json({
@@ -100,7 +100,7 @@ exports.getOneMemoir = async (req, res, next) => {
 exports.updateOneMemoir = async (req, res, next) => {
   try {
     const userStatsID = req.user.statsID;
-    const targetMemoirID = req.body.id;
+    const targetMemoirID = req.query.id;
     const oldStats = await Stats.findById(userStatsID);
     if (!oldStats) return next(new MyError("No stats found with that ID", 404));
 
@@ -137,9 +137,7 @@ exports.updateOneMemoir = async (req, res, next) => {
 
     res.status(200).json({
       status: "success",
-      data: {
-        data: updatedMemoir,
-      },
+      data: updatedMemoir,
     });
   } catch (error) {
     console.log(error);

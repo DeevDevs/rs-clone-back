@@ -43,17 +43,20 @@ exports.addNewMemoir = async (req, res, next) => {
 exports.deleteOneMemoir = async (req, res, next) => {
   try {
     const thisUserID = req.user._id;
-    const thisMemoir = await Memoir.findById(req.body.id);
+    const memoirID = req.query.id;
+    if (!memoirID)
+      return next(new MyError("Please, the memoir ID you want to delete ", 400));
+    const thisMemoir = await Memoir.findById(memoirID);
     if (!thisMemoir)
       return next(new MyError("No memoir found with that ID", 404));
 
     const thisUser = await User.findById(thisUserID);
     if (!thisUser) return next(new MyError("No user found with that ID", 404));
 
-    await Memoir.findByIdAndDelete(req.body.id);
+    await Memoir.findByIdAndDelete(memoirID);
 
     const updateBody = {
-      memoirIDs: thisUser.memoirIDs.filter((id) => id !== req.body.id),
+      memoirIDs: thisUser.memoirIDs.filter((id) => id !== memoirID),
     };
 
     const updatedUser = await User.findByIdAndUpdate(thisUserID, updateBody, {

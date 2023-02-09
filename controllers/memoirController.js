@@ -75,7 +75,7 @@ exports.deleteOneMemoir = async (req, res, next) => {
       return next(new MyError("Could not find stats for this user", 404));
     const updatedStatsBody = updateStats(oldStats, thisMemoir, "remove");
     const updatedStats = await Stats.findByIdAndUpdate(
-      updatedUser.statsID,
+      thisUser.statsID,
       updatedStatsBody,
       {
         new: true,
@@ -175,7 +175,7 @@ exports.updateOneMemoir = async (req, res, next) => {
       "add"
     );
     const updatedStats = await Stats.findByIdAndUpdate(
-      updatedUser.statsID,
+      userStatsID,
       updatedStatsBody,
       {
         new: true,

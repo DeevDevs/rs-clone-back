@@ -26,9 +26,11 @@ const userSchema = new mongoose.Schema({
   },
   bio: {
     type: String,
+    default: "",
   },
   age: {
     type: Number,
+    required: false,
   },
   statsID: {
     type: String,

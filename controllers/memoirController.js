@@ -33,6 +33,7 @@ exports.addNewMemoir = async (req, res, next) => {
       },
     });
   } catch (error) {
+    console.log(error)
     return next(
       new MyError("Something went wrong while creating a memoir", 500)
     );

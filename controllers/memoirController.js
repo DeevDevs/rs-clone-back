@@ -6,17 +6,19 @@ const MyError = require("../helperFns/errorClass");
 
 exports.addNewMemoir = async (req, res, next) => {
   try {
+    console.log(req.user);
+    const thisUserID = req.user._id;
     const newMemoir = await Memoir.create({ ...req.body });
     if (!newMemoir) return next(new MyError("Could not create a memoir", 404));
 
-    const thisUser = await User.findById(res.locals.user._id);
+    const thisUser = await User.findById(thisUserID);
     if (!thisUser) return next(new MyError("No user found with that ID", 404));
 
     const updateUserBody = {
       memoirIDs: [newMemoir.id, ...thisUser.memoirIDs],
     };
     const updatedUser = await User.findByIdAndUpdate(
-      res.locals.user._id,
+      thisUserID,
       updateUserBody,
       {
         new: true,
@@ -33,7 +35,7 @@ exports.addNewMemoir = async (req, res, next) => {
       },
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return next(
       new MyError("Something went wrong while creating a memoir", 500)
     );
@@ -42,11 +44,12 @@ exports.addNewMemoir = async (req, res, next) => {
 
 exports.deleteOneMemoir = async (req, res, next) => {
   try {
+    const thisUserID = req.user._id;
     const thisMemoir = await Memoir.findById(req.body.id);
     if (!thisMemoir)
       return next(new MyError("No memoir found with that ID", 404));
 
-    const thisUser = await User.findById(res.locals.user._id);
+    const thisUser = await User.findById(thisUserID);
     if (!thisUser) return next(new MyError("No user found with that ID", 404));
 
     await Memoir.findByIdAndDelete(req.body.id);
@@ -55,14 +58,10 @@ exports.deleteOneMemoir = async (req, res, next) => {
       memoirIDs: thisUser.memoirIDs.filter((id) => id !== req.body.id),
     };
 
-    const updatedUser = await User.findByIdAndUpdate(
-      res.locals.user._id,
-      updateBody,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
+    const updatedUser = await User.findByIdAndUpdate(thisUserID, updateBody, {
+      new: true,
+      runValidators: true,
+    });
     if (!updatedUser)
       return next(
         new MyError("Could not update user DB after memoir was deleted", 500)
@@ -73,6 +72,7 @@ exports.deleteOneMemoir = async (req, res, next) => {
       data: null,
     });
   } catch (error) {
+    console.log(error);
     return next(
       new MyError("Something went wrong while deleting a memoir", 500)
     );
@@ -89,6 +89,7 @@ exports.getOneMemoir = async (req, res, next) => {
       data: memoir,
     });
   } catch (error) {
+    console.log(error);
     return next(
       new MyError("Something went wrong while getting a memoir", 500)
     );
@@ -97,7 +98,7 @@ exports.getOneMemoir = async (req, res, next) => {
 
 exports.updateOneMemoir = async (req, res, next) => {
   try {
-    const userStatsID = res.locals.user.statsID;
+    const userStatsID = req.user.statsID;
     const targetMemoirID = req.body.id;
     const oldStats = await Stats.findById(userStatsID);
     if (!oldStats) return next(new MyError("No stats found with that ID", 404));
@@ -140,6 +141,7 @@ exports.updateOneMemoir = async (req, res, next) => {
       },
     });
   } catch (error) {
+    console.log(error);
     return next(
       new MyError("Something went wrong while updating a memoir", 500)
     );

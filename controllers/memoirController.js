@@ -7,6 +7,7 @@ const MyError = require("../helperFns/errorClass");
 exports.addNewMemoir = async (req, res, next) => {
   try {
     const thisUserID = req.user._id;
+    console.log(thisUserID);
     const newMemoir = await Memoir.create({ ...req.body });
     if (!newMemoir) return next(new MyError("Could not create a memoir", 404));
 
@@ -100,13 +101,15 @@ exports.getOneMemoir = async (req, res, next) => {
 
 exports.updateOneMemoir = async (req, res, next) => {
   try {
+    if (!req.user.statsID || !req.query.id)
+      return next(new MyError("Wrong query", 401));
     const userStatsID = req.user.statsID;
     const targetMemoirID = req.query.id;
     const oldStats = await Stats.findById(userStatsID);
     if (!oldStats) return next(new MyError("No stats found with that ID", 404));
 
     const oldMemoir = await Memoir.findById(targetMemoirID);
-    if (!oldStats)
+    if (!oldMemoir)
       return next(new MyError("No memoir found with that ID", 404));
 
     const initialStatsUpdateBody = updateStats(oldStats, oldMemoir, "remove");
@@ -151,14 +154,11 @@ exports.updateOneMemoir = async (req, res, next) => {
 
 exports.getPreviewData = async (req, res, next) => {
   try {
-    console.log(req.query, req.user._id);
-    if (!req.query.id)
+    console.log(req.user._id);
+    const thisUserID = req.user._id;
+    console.log(thisUserID);
+    if (!thisUserID)
       return next(new MyError("Please, fix the request URL", 400));
-
-    if (req.query.id !== req.user._id)
-      return next(
-        new MyError("You are not allowed to get this information", 401)
-      );
 
     const memoirIDs = req.user.memoirIDs;
     if (memoirIDs.length === 0) {
@@ -167,7 +167,7 @@ exports.getPreviewData = async (req, res, next) => {
         data: [],
       });
     }
-    const promises = await memoirIDs.map((memoirID) => {
+    const promises = await memoirIDs.map((targetMemoirID) => {
       return new Promise(async (resolve) => {
         const memoir = await Memoir.findById(targetMemoirID);
         if (memoir) {
@@ -191,7 +191,7 @@ exports.getPreviewData = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     return next(
-      new MyError("Something went wrong while updating a memoir", 500)
+      new MyError("Something went wrong while getting previews", 500)
     );
   }
 };

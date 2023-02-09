@@ -151,10 +151,14 @@ exports.updateOneMemoir = async (req, res, next) => {
 
 exports.getPreviewData = async (req, res, next) => {
   try {
-    if (!req.user)
+    if (!req.query.id)
+      return next(new MyError("Please, fix the request URL", 400));
+
+    if (req.query.id !== req.user._id)
       return next(
-        new MyError("Please, signup or login to perform this action", 400)
+        new MyError("You are not allowed to get this information", 401)
       );
+
     const memoirIDs = req.user.memoirIDs;
     if (memoirIDs.length === 0) {
       res.status(200).json({

@@ -155,7 +155,7 @@ exports.updateOneMemoir = async (req, res, next) => {
 exports.getPreviewData = async (req, res, next) => {
   try {
     if (!req.user) return next(new MyError("Please, fix the request URL", 400));
-    
+
     const memoirIDs = req.user.memoirIDs;
     if (memoirIDs.length === 0) {
       res.status(200).json({
@@ -178,8 +178,8 @@ exports.getPreviewData = async (req, res, next) => {
       });
     });
 
-    const previews = await Promise.allSettled(promises);
-
+    const promiseResults = await Promise.allSettled(promises);
+    const previews = promiseResults.map((result) => result.value);
     res.status(200).json({
       status: "success",
       data: previews,

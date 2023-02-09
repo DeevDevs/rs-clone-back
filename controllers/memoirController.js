@@ -30,9 +30,7 @@ exports.addNewMemoir = async (req, res, next) => {
 
     res.status(201).json({
       status: "success",
-      data: {
-        data: newMemoir,
-      },
+      data: newMemoir,
     });
   } catch (error) {
     console.log(error);

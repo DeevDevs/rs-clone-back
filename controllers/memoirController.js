@@ -7,7 +7,8 @@ const MyError = require("../helperFns/errorClass");
 exports.addNewMemoir = async (req, res, next) => {
   try {
     const thisUserID = req.user._id;
-    console.log(thisUserID.toString(), req.body.userID);
+    if ((thisUserID.toString() !== req.body.userID))
+      return next(new MyError("You cannot create a memoir. Login or Signup first", 401));
     const newMemoir = await Memoir.create({ ...req.body });
     if (!newMemoir) return next(new MyError("Could not create a memoir", 404));
 

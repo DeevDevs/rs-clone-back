@@ -61,7 +61,7 @@ exports.deleteOneMemoir = async (req, res, next) => {
     const memoirID = req.query.id;
     if (!memoirID)
       return next(
-        new MyError("Please, the memoir ID you want to delete ", 400)
+        new MyError("Please, specify the memoir ID you want to delete, or login first", 400)
       );
     const thisMemoir = await Memoir.findById(memoirID);
     if (!thisMemoir)

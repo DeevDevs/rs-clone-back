@@ -61,9 +61,9 @@ const memoirSchema = new mongoose.Schema({
     unique: false,
     default: [],
   },
-  memoirPhoto: {
-    type: String,
-    default: "default.jpg",
+  memoirPhotos: {
+    type: [String],
+    default: ["default.jpg"],
   },
   description: {
     type: String,

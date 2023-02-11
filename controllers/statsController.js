@@ -41,7 +41,6 @@ exports.updateOneStats = async (req, res, next) => {
       new: true,
     });
     if (!updatedStats) return next(new MyError("Could not update stats", 500));
-    console.log(updatedStats);
     res.status(200).json({
       status: "success",
       data: updatedStats,

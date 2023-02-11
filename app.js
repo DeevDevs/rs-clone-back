@@ -34,7 +34,6 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Credentials": "true",
     "Access-Control-Allow-Methods": "GET, PATCH, POST, DELETE",
   });
-  console.log(req.method);
   if ("OPTIONS" == req.method) {
     res.header({
       // "Access-Control-Allow-Origin":

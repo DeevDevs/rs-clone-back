@@ -11,10 +11,8 @@ const sendToken = async (user, statusCode, req, res) => {
   try {
     const token = createToken(user._id);
     const cookieOptions = createCookieOptions(90);
-    // makes sure the connection is secure (проверяет безопасность соединения)
     if (req.secure || req.headers["x-forwarded-proto"] === "https")
-      cookieOptions.secure = true; // this is specific for HEROKU (это необходимо для работы с Heroku)
-    // adds a cookie to response object (добавляет cookie в ответ)
+      cookieOptions.secure = true;
     res.cookie("jwt", token, cookieOptions);
     res.set("Authorization", `Bearer ${token}`);
     user.password = undefined;
@@ -26,9 +24,11 @@ const sendToken = async (user, statusCode, req, res) => {
       },
     });
   } catch (error) {
-    res.status(400).json({
-      status: error.message,
-    });
+    console.log(error);
+    return next(new MyError(error.message, 400));
+    // res.status(400).json({
+    //   status: error.message,
+    // });
   }
 };
 
@@ -63,6 +63,7 @@ exports.signUp = async (req, res, next) => {
     sendToken(readyUser, 201, req, res);
     return;
   } catch (error) {
+    console.log(error);
     if (error.name === "ValidationError")
       return next(new MyError(error.name, 99000));
     return next(new MyError("Something went wrong while signup", error.code));
@@ -81,6 +82,7 @@ exports.login = async (req, res, next) => {
 
     sendToken(user, 200, req, res);
   } catch (error) {
+    console.log(error);
     return next(new MyError("Something went wrong while login", 500));
   }
 };
@@ -116,6 +118,7 @@ exports.isLoggedIn = async (req, res, next) => {
     }
     next(new MyError("User is not logged in", 401));
   } catch (error) {
+    console.log(error);
     return next(
       new MyError("Something went wrong while checking authorization", 500)
     );
@@ -126,7 +129,6 @@ exports.isLoggedIn = async (req, res, next) => {
 exports.protect = async (req, res, next) => {
   try {
     let token;
-    console.log(req.cookies.jwt);
     if (
       req.headers.authorization &&
       req.headers.authorization.startsWith("Bearer")
@@ -147,6 +149,7 @@ exports.protect = async (req, res, next) => {
     // res.locals.user = currentUser;
     next();
   } catch (error) {
+    console.log(error);
     return next(
       new MyError("You are not authorized to perform this action", 401)
     );

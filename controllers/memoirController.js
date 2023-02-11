@@ -7,7 +7,7 @@ const MyError = require("../helperFns/errorClass");
 exports.addNewMemoir = async (req, res, next) => {
   try {
     const thisUserID = req.user._id;
-    console.log(thisUserID, req.body.userID);
+    console.log(thisUserID.toString(), req.body.userID);
     const newMemoir = await Memoir.create({ ...req.body });
     if (!newMemoir) return next(new MyError("Could not create a memoir", 404));
 

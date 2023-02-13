@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "Please, tell us about yourself a little.",
   },
-  bio: {
+  from: {
     type: String,
     default: "",
   },

@@ -7,8 +7,6 @@ const jwt = require("jsonwebtoken");
 
 exports.deleteOneUser = async (req, res, next) => {
   try {
-    if (!req.user)
-      return next(new MyError("Please, login to delete user data", 401));
     const thisUser = await User.findById(req.query.id);
     if (!thisUser) return next(new MyError("No user found with that ID", 404));
 
@@ -42,8 +40,6 @@ exports.deleteOneUser = async (req, res, next) => {
 
 exports.getOneUser = async (req, res, next) => {
   try {
-    if (!req.user)
-      return next(new MyError("Please, login to get user data", 401));
     const user = await User.findById(req.query.id);
     if (!user) return next(new MyError("No user found with that ID", 404));
 
@@ -61,9 +57,7 @@ exports.getOneUser = async (req, res, next) => {
 
 exports.updateOneUser = async (req, res, next) => {
   try {
-    if (!req.user)
-      return next(new MyError("Please, login to update user data", 401));
-    if (!req.body) return next(new MyError("Please, provide user data", 400));
+    if (!req.body || !req.body.id) return next(new MyError("Please, login or provide user data", 400));
     const id = req.body.id;
     const updateBody = JSON.parse(JSON.stringify(req.body));
 

@@ -31,6 +31,7 @@ const userSchema = new mongoose.Schema({
   age: {
     type: Number,
     required: false,
+    default: 0,
   },
   statsID: {
     type: String,

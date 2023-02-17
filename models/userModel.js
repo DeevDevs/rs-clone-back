@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
   },
   photo: {
     type: String,
-    default: "default.jpg",
+    default: "https://i.ibb.co/420YqnY/sloth.jpg",
   },
   bio: {
     type: String,

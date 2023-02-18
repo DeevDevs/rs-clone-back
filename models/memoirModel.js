@@ -63,7 +63,7 @@ const memoirSchema = new mongoose.Schema({
   },
   memoirPhotos: {
     type: [String],
-    default: ["default.jpg"],
+    default: ["https://i.ibb.co/XWyGkgv/default-trip-img.jpg"],
   },
   description: {
     type: String,

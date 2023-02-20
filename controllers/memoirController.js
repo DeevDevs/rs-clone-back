@@ -221,8 +221,7 @@ exports.getPreviewData = async (req, res, next) => {
           resolve(previewData);
           return;
         } else {
-          console.log('I am a problem!!!');
-          reject('Smth went wrong');
+          resolve('No preview found');
           return;
         }
       });
@@ -230,7 +229,7 @@ exports.getPreviewData = async (req, res, next) => {
 
     const promiseResults = await Promise.allSettled(promises);
     console.log(promiseResults);
-    const previews = promiseResults.filter((promise) => promise.status === 'fulfilled').map((result) => result.value);
+    const previews = promiseResults.filter((promise) => promise.value !== 'No preview found').map((result) => result.value);
     res.status(200).json({
       status: "success",
       data: previews,

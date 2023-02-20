@@ -224,6 +224,7 @@ exports.getPreviewData = async (req, res, next) => {
     });
 
     const promiseResults = await Promise.allSettled(promises);
+    console.log(promiseResults);
     const previews = promiseResults.map((result) => result.value);
     res.status(200).json({
       status: "success",

@@ -220,13 +220,17 @@ exports.getPreviewData = async (req, res, next) => {
           };
           resolve(previewData);
           return;
-        } else reject('Smth went wrong');
+        } else {
+          console.log('I am a problem!!!');
+          reject('Smth went wrong');
+          return;
+        }
       });
     });
 
     const promiseResults = await Promise.allSettled(promises);
     console.log(promiseResults);
-    const previews = promiseResults.map((result) => result.value);
+    const previews = promiseResults.filter((promise) => promise.status === 'fulfilled').map((result) => result.value);
     res.status(200).json({
       status: "success",
       data: previews,

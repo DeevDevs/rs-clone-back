@@ -44,7 +44,7 @@ app.use((req, res, next) => {
       "Access-Control-Allow-Methods": "GET, PATCH, POST, DELETE",
       // "Access-Control-Allow-Credentials": "true",
     });
-    res.send(200);
+    res.sendStatus(200);
   } else next();
 });
 

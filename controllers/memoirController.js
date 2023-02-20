@@ -220,7 +220,7 @@ exports.getPreviewData = async (req, res, next) => {
           };
           resolve(previewData);
           return;
-        }
+        } else reject('Smth went wrong');
       });
     });
 

@@ -25,9 +25,14 @@ app.use(express.static(path.join(__dirname, "public")));
 //   })
 // );
 app.use((req, res, next) => {
+  const allowedOrigins = ["https://wondrous-baklava-397536.netlify.app", "http://localhost:3000"];
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+       res.setHeader('Access-Control-Allow-Origin', origin);
+  }
   res.header({
-    "Access-Control-Allow-Origin":
-    "https://wondrous-baklava-397536.netlify.app",
+    // "Access-Control-Allow-Origin":
+    // "https://wondrous-baklava-397536.netlify.app",
     // "Access-Control-Allow-Origin": "http://localhost:3000",
     "Access-Control-Allow-Headers":
       "Content-Type, Authorization, accept, access-control-allow-origin, Cookie",
@@ -36,8 +41,8 @@ app.use((req, res, next) => {
   });
   if ("OPTIONS" == req.method) {
     res.header({
-      "Access-Control-Allow-Origin":
-      "https://wondrous-baklava-397536.netlify.app",
+      // "Access-Control-Allow-Origin":
+      // "https://wondrous-baklava-397536.netlify.app",
       // "Access-Control-Allow-Origin": "http://localhost:3000",
       "Access-Control-Allow-Headers":
         "Content-Type, Authorization, accept, access-control-allow-origin, Cookie",

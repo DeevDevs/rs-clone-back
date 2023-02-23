@@ -17,7 +17,7 @@ exports.updateStats = (oldStats, memoir, condition) => {
     days: updateValue(oldStats.days, memoir.days, condition),
     averageRate: newRate,
     distance: updateValue(oldStats.distance, memoir.distance, condition),
-    sites: newSites,
+    sites: JSON.parse(JSON.stringify(newSites)),
     countries: newCountries,
     continents: newContinents,
   };
@@ -51,14 +51,19 @@ function updateNestedArray(array, value, condition) {
 function addSites(statsSites, memoirSites, condition) {
   const newSitesArray = [];
   if (condition === "add") {
+    console.log('statsSites', statsSites);
+    console.log('memoirSites', memoirSites);
+    console.log('new1', newSitesArray);
     statsSites.forEach((siteRecord) => {
       if (memoirSites.find((memoirSite) => memoirSite === siteRecord[0]))
-        newSitesArray.push([siteRecord[0], `${+siteRecord[1] + 1}`]);
+      newSitesArray.push([siteRecord[0], `${+siteRecord[1] + 1}`]);
     });
+    console.log('new2', newSitesArray);
     memoirSites.forEach((memoirSite) => {
       if (newSitesArray.find((site) => site[0] === memoirSite)) return;
       newSitesArray.push([memoirSite, "1"]);
     });
+    console.log('new3', newSitesArray);
   }
   if (condition === "remove") {
     statsSites.forEach((siteRecord) => {

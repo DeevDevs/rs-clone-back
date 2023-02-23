@@ -33,10 +33,7 @@ exports.addNewMemoir = async (req, res, next) => {
     const oldStats = await Stats.findById(updatedUser.statsID);
     if (!oldStats)
     return next(new MyError("Could not find stats with that ID", 404));
-    console.log('OLDSTATS', oldStats);
-    console.log('NEWMEMOIR', newMemoir);
     const updatedStatsBody = updateStats(oldStats, newMemoir, "add");
-    console.log('NEWSTATS', updatedStatsBody);
     const updatedStats = await Stats.findByIdAndUpdate(
       updatedUser.statsID,
       updatedStatsBody,

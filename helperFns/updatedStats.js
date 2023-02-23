@@ -54,9 +54,12 @@ function addSites(statsSites, memoirSites, condition) {
     console.log('statsSites', statsSites);
     console.log('memoirSites', memoirSites);
     console.log('new1', newSitesArray);
+     [ [ 'TestStats', '1' ], [ 'TestStats2', '1' ], [ 'TestStats23', '1' ] ]
+     [ 'TestTrip2', 'TestTrip22', 'TestTrip222' ]
     statsSites.forEach((siteRecord) => {
-      if (memoirSites.find((memoirSite) => memoirSite === siteRecord[0]))
-      newSitesArray.push([siteRecord[0], `${+siteRecord[1] + 1}`]);
+      if (memoirSites.find((memoirSite) => memoirSite === siteRecord[0])) {
+        newSitesArray.push([siteRecord[0], `${+siteRecord[1] + 1}`]);
+      } else newSitesArray.push(siteRecord);
     });
     console.log('new2', newSitesArray);
     memoirSites.forEach((memoirSite) => {

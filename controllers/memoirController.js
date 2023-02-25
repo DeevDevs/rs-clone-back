@@ -162,7 +162,7 @@ exports.updateOneMemoir = async (req, res, next) => {
       targetMemoirID,
       updateBody,
       {
-        new: true, // return the new/updated document/data (возвращает новую версию документа)
+        new: true,
         runValidators: true,
       }
     );

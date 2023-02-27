@@ -66,7 +66,7 @@ function addSites(statsSites, memoirSites, condition) {
       if (memoirSites.find((memoirSite) => memoirSite === siteRecord[0])) {
         if (siteRecord[1] === "1") return;
         newSitesArray.push([siteRecord[0], `${+siteRecord[1] - 1}`]);
-      }
+      } else newSitesArray.push(siteRecord);
     });
   }
   return newSitesArray;

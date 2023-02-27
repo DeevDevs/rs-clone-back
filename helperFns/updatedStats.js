@@ -73,20 +73,21 @@ function addSites(statsSites, memoirSites, condition) {
 }
 
 function countAverageRate(oldStats, memoirRate, condition) {
+  let rate;
   if (condition === "add") {
-    return (
-      (oldStats.averageRate * oldStats.places + memoirRate) /
-      (oldStats.places + 1)
-    );
+    rate = (oldStats.averageRate * oldStats.places + memoirRate) /
+      (oldStats.places + 1);
   }
   if (condition === "remove") {
     if (oldStats.places === 1) return 0;
     if (oldStats.averageRate === 0) return 0;
-    return (
-      (oldStats.averageRate * oldStats.places - memoirRate) /
-      (oldStats.places - 1)
-    );
+    rate = (oldStats.averageRate * oldStats.places - memoirRate) /
+      (oldStats.places - 1);
   }
+  if (rate.toString().includes('.')) {
+    const roundedRate = rate.toFixed(1);
+    return +roundedRate;
+  } else return rate;
 }
 
 function updateValue(statsValue, memoirValue, condition) {

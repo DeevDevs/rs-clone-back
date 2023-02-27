@@ -140,9 +140,9 @@ exports.updateOneMemoir = async (req, res, next) => {
     const oldMemoir = await Memoir.findById(targetMemoirID);
     if (!oldMemoir)
       return next(new MyError("No memoir found with that ID", 404));
-
+    console.log('Old records', oldStats);
     const initialStatsUpdateBody = updateStats(oldStats, oldMemoir, "remove");
-
+    console.log('After removed this memoir old records', initialStatsUpdateBody);
     // const updatedStats = await Stats.findByIdAndUpdate(
     //   userStatsID,
     //   initialStatsUpdateBody,
@@ -175,6 +175,7 @@ exports.updateOneMemoir = async (req, res, next) => {
       updatedMemoir,
       "add"
     );
+    console.log('After added new records', updatedStatsBody);
     const updatedStats = await Stats.findByIdAndUpdate(
       userStatsID,
       updatedStatsBody,

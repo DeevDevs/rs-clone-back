@@ -26,9 +26,6 @@ const sendToken = async (user, statusCode, req, res) => {
   } catch (error) {
     console.log(error);
     return next(new MyError(error.message, 400));
-    // res.status(400).json({
-    //   status: error.message,
-    // });
   }
 };
 
@@ -99,11 +96,8 @@ exports.logout = (req, res) => {
 
 exports.isLoggedIn = async (req, res, next) => {
   try {
-    // console.log(req.body.token);
-    // if (req.body.token && req.body.token !== "loggedout") {
     if (req.cookies.jwt && req.cookies.jwt !== "loggedout") {
       const decoded = await promisify(jwt.verify)(
-        // req.body.token,
         req.cookies.jwt,
         process.env.JWT_SECRET
       );
@@ -146,7 +140,6 @@ exports.protect = async (req, res, next) => {
       return next(new MyError("No use found with such ID", 404));
 
     req.user = currentUser;
-    // res.locals.user = currentUser;
     next();
   } catch (error) {
     console.log(error);
@@ -154,5 +147,4 @@ exports.protect = async (req, res, next) => {
       new MyError("You are not authorized to perform this action", 401)
     );
   }
-  // next();
 };

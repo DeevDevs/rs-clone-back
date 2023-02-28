@@ -2,10 +2,6 @@ const application = require("./app.js");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
-// process.on("uncaughtException", (err) => {
-//   process.exit(1);
-// });
-
 dotenv.config({ path: `./config.env` });
 const DB = process.env.DATABASE.replace(
   "<PASSWORD>",
@@ -37,7 +33,7 @@ process.on("unhandledRejection", () => {
 });
 
 process.on("SIGTERM", () => {
-  console.log("SIGTERM received. SHUTTING DOWN gracefully...");
+  console.log("SIGTERM received. Shutting down gracefully...");
   server.close(() => {
     console.log("Process terminated!");
   });

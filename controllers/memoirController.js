@@ -141,18 +141,7 @@ exports.updateOneMemoir = async (req, res, next) => {
     if (!oldMemoir)
       return next(new MyError("No memoir found with that ID", 404));
     const initialStatsUpdateBody = updateStats(oldStats, oldMemoir, "remove");
-    // const updatedStats = await Stats.findByIdAndUpdate(
-    //   userStatsID,
-    //   initialStatsUpdateBody,
-    //   {
-    //     new: true,
-    //   }
-    // );
-    // if (!updatedStats)
-    //   return next(
-    //     new MyError("Could not update stats while memoir update", 500)
-    //   );
-
+    
     const updateBody = { ...req.body };
     delete updateBody.id;
 

@@ -10,45 +10,25 @@ const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
 
 const { processError } = require("./helperFns/errorHandler");
-const cors = require("cors");
 
 const app = express();
 
 app.enable("trust proxy");
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-// app.use(cors());
-// app.use(
-//   cors({
-//     credentials: true,
-//     origin: "http://localhost:3000",
-//   })
-// );
 app.use((req, res, next) => {
-  const allowedOrigins = ["https://wondrous-baklava-397536.netlify.app", "http://localhost:3000", "https://travelers-memoirs.netlify.app"];
+  const allowedOrigins = ["http://localhost:3000", "https://travelers-memoirs.netlify.app"];
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
        res.setHeader('Access-Control-Allow-Origin', origin);
   }
   res.header({
-    // "Access-Control-Allow-Origin":
-    // "https://wondrous-baklava-397536.netlify.app",
-    // "Access-Control-Allow-Origin": "http://localhost:3000",
     "Access-Control-Allow-Headers":
       "Content-Type, Authorization, accept, access-control-allow-origin, Cookie",
     "Access-Control-Allow-Credentials": "true",
     "Access-Control-Allow-Methods": "GET, PATCH, POST, DELETE",
   });
   if ("OPTIONS" == req.method) {
-    // res.header({
-    //   // "Access-Control-Allow-Origin":
-    //   // "https://wondrous-baklava-397536.netlify.app",
-    //   // "Access-Control-Allow-Origin": "http://localhost:3000",
-    //   "Access-Control-Allow-Headers":
-    //     "Content-Type, Authorization, accept, access-control-allow-origin, Cookie",
-    //   "Access-Control-Allow-Methods": "GET, PATCH, POST, DELETE",
-    //   // "Access-Control-Allow-Credentials": "true",
-    // });
     res.send(200);
   } else next();
 });
